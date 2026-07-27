@@ -843,17 +843,41 @@
     });
   }
 
-  // 이미 로그인돼 있으면 바로 들어가기
-  try { if(Kakao.Auth.getAccessToken()) fetchMeAndRoute(); } catch(e){}
+  var REST_KEY = "09629226fe20281f906a838859f733db";
+  var REDIRECT_URI = location.origin + "/";
+
+  function getParam(name){
+    var m = new RegExp('[?&]'+name+'=([^&]+)').exec(location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function cleanUrl(){ try { history.replaceState({}, '', location.pathname); } catch(e){} }
+  function showErr(msg){ if(err){ err.style.display='block'; err.textContent=msg; } }
+
+  var authCode = getParam('code');
+
+  if(authCode){
+    // 로그인 창에서 돌아옴 → 인증코드로 토큰 발급
+    fetch('https://kauth.kakao.com/oauth/token', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=utf-8'},
+      body:'grant_type=authorization_code&client_id='+REST_KEY
+          +'&redirect_uri='+encodeURIComponent(REDIRECT_URI)+'&code='+authCode
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.access_token){ Kakao.Auth.setAccessToken(d.access_token); cleanUrl(); fetchMeAndRoute(); }
+      else { cleanUrl(); showErr('로그인 처리에 실패했어요. 다시 시도해 주세요.'); }
+    })
+    .catch(function(){ cleanUrl(); showErr('로그인 연결에 실패했어요. 다시 시도해 주세요.'); });
+  } else {
+    // 이미 로그인돼 있으면 바로 들어가기
+    try { if(Kakao.Auth.getAccessToken()) fetchMeAndRoute(); } catch(e){}
+  }
 
   var btn = document.getElementById('kakaoLoginBtn');
   if(btn) btn.addEventListener('click', function(){
     if(err) err.style.display='none';
-    Kakao.Auth.login({
-      scope:'profile_nickname',
-      success:function(){ fetchMeAndRoute(); },
-      fail:function(){ if(err){err.style.display='block';err.textContent='로그인에 실패했어요. 다시 눌러주세요.';} }
-    });
+    Kakao.Auth.authorize({ redirectUri: REDIRECT_URI, scope:'profile_nickname' });
   });
 
   var out = document.getElementById('kakaoLogout');
