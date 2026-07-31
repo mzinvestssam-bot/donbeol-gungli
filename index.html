@@ -809,6 +809,7 @@
 <script>
 (function(){
   "use strict";
+  var BUILD_VERSION = "v3-promise-0801";   // 배포 확인용 표식
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤"];   // 이 닉네임이면 관리자
   var ADMIN_IDS   = [];                     // (나중에 카카오 고유번호로 더 안전하게)
@@ -832,15 +833,15 @@
   }
 
   function fetchMeAndRoute(){
-    Kakao.API.request({
-      url:'/v2/user/me',
-      success:function(res){
+    Kakao.API.request({ url:'/v2/user/me' })
+      .then(function(res){
         var nick = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
                  || (res.properties && res.properties.nickname) || '';
         route(nick, String(res.id));
-      },
-      fail:function(){ if(err){err.style.display='block';err.textContent='정보를 불러오지 못했어요. 다시 시도해 주세요.';} }
-    });
+      })
+      .catch(function(e){
+        showErr('정보를 불러오지 못했어요: ' + (e && (e.msg||e.message) ? (e.msg||e.message) : '다시 시도해 주세요'));
+      });
   }
 
   var REST_KEY = "09629226fe20281f906a838859f733db";
