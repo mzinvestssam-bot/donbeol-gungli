@@ -809,10 +809,16 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v3-promise-0801";   // 배포 확인용 표식
+  var BUILD_VERSION = "v5-contains-0801";   // 배포 확인용 표식
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
-  var ADMIN_NICKS = ["김영찬", "금융쌤"];   // 이 닉네임이면 관리자
-  var ADMIN_IDS   = [];                     // (나중에 카카오 고유번호로 더 안전하게)
+  var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];   // 이 단어가 이름에 포함되면 관리자
+  var ADMIN_IDS   = [];                     // (원하면 카카오 고유번호로 더 안전하게)
+  // 이름이 정확히 안 맞아도 위 단어가 "포함"되면 관리자로 인식 (@핸들·띄어쓰기 OK)
+  function checkAdmin(nick, id){
+    nick = nick || "";
+    for(var i=0;i<ADMIN_NICKS.length;i++){ if(nick.indexOf(ADMIN_NICKS[i])>-1) return true; }
+    return ADMIN_IDS.indexOf(id)>-1;
+  }
 
   try { if(!Kakao.isInitialized()) Kakao.init(KAKAO_JS_KEY); } catch(e){}
 
@@ -827,7 +833,7 @@
 
   function route(nick, id){
     hide(gate);
-    var isAdmin = ADMIN_NICKS.indexOf(nick)>-1 || ADMIN_IDS.indexOf(id)>-1;
+    var isAdmin = checkAdmin(nick, id);
     if(isAdmin){ show(nav); hide(sv); if(ad) ad.classList.remove('hide'); show(ad); }
     else { show(nav); if(ad) ad.classList.add('hide'); hide(ad); show(sv); }
   }
@@ -837,7 +843,11 @@
       .then(function(res){
         var nick = (res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)
                  || (res.properties && res.properties.nickname) || '';
-        route(nick, String(res.id));
+        var myId = String(res.id);
+        if(!checkAdmin(nick, myId)){
+          alert("[관리자 등록용 안내]\n\n카카오 이름: " + nick + "\n카카오 번호(ID): " + myId + "\n\n이 번호를 효은님께 알려주시면 관리자로 등록해드려요!");
+        }
+        route(nick, myId);
       })
       .catch(function(e){
         showErr('정보를 불러오지 못했어요: ' + (e && (e.msg||e.message) ? (e.msg||e.message) : '다시 시도해 주세요'));
