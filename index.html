@@ -342,6 +342,71 @@
   .wbar i.na{background:rgba(236,229,210,.13)}
   .tsk:has(input:checked){border-color:rgba(217,184,106,.32)}
   .tsk:has(input:checked) span{text-decoration-color:rgba(217,184,106,.5)}
+
+  /* ═══════════ 🏛 홈페이지급 구조 격상 ═══════════ */
+  html{overflow-x:clip}
+  /* ── 글래시 네비 강화 ── */
+  nav{box-shadow:0 6px 24px -16px rgba(0,0,0,.7);border-bottom:1px solid rgba(217,184,106,.14)}
+  nav .nb .dot{background:var(--green)}
+
+  /* ── HERO 밴드 (수강생) ── */
+  #studentView .head{
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+    padding:58px calc(50vw - 50%) 40px;margin-top:0;
+    background:
+      radial-gradient(78% 120% at 88% -12%, rgba(217,184,106,.17), transparent 55%),
+      radial-gradient(60% 90% at 6% 118%, rgba(217,184,106,.07), transparent 60%),
+      linear-gradient(165deg,#1E2923 0%,#141E18 58%,#0E1712 100%);
+    border-bottom:1px solid rgba(217,184,106,.16);
+    box-shadow:inset 0 -50px 70px -60px rgba(0,0,0,.7);}
+  #studentView .head h1{font-size:34px;margin-top:14px;letter-spacing:-.035em}
+  #studentView .head .sub{font-size:15px;color:#D6DCCE;max-width:44ch}
+  #studentView .head .badge{background:rgba(217,184,106,.16);color:var(--green2);border:1px solid rgba(217,184,106,.32)}
+  /* 히어로 위 카드들 = 유리 질감 */
+  #studentView .head .tc{background:rgba(255,255,255,.05);border-color:rgba(236,229,210,.13);backdrop-filter:blur(6px)}
+  #studentView .head .prow{margin-top:22px}
+  #studentView .head .pcard{background:rgba(255,255,255,.045);border-color:rgba(236,229,210,.12);
+    backdrop-filter:blur(8px);box-shadow:0 12px 34px -20px rgba(0,0,0,.6)}
+
+  /* ── 섹션 리듬: 풀블리드 밴드 교차 ── */
+  #studentView section{margin-top:0;padding:46px 0}
+  #studentView section:nth-of-type(even){
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+    padding-left:calc(50vw - 50%);padding-right:calc(50vw - 50%);
+    background:linear-gradient(180deg, rgba(217,184,106,.04), rgba(217,184,106,.012));
+    border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+  /* 섹션 헤더 골드 액센트 */
+  .shead .sec-h{display:inline-flex;align-items:center;gap:11px}
+  .shead .sec-h::before{content:"";width:20px;height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--green),transparent)}
+
+  /* ── 그라데이션 골드 버튼 + 컬러 글로우 ── */
+  .submit,.twrite,.vod.play{background:linear-gradient(135deg,#EBD08C,#D2AE5E);
+    box-shadow:0 10px 24px -8px rgba(217,184,106,.48)}
+  .submit:hover,.twrite:hover,.vod.play:hover{background:linear-gradient(135deg,#F1D9A0,#D9B86A)}
+  .kbtn{box-shadow:0 10px 26px -8px rgba(254,229,0,.42)}
+  .kbtn:hover{box-shadow:0 12px 30px -8px rgba(254,229,0,.52)}
+
+  /* ── 관리자 히어로 밴드 ── */
+  #adminView .ahead{
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+    padding:50px calc(50vw - 50%) 34px;margin-top:0;
+    background:
+      radial-gradient(70% 120% at 90% -12%, rgba(217,184,106,.15), transparent 55%),
+      linear-gradient(165deg,#1E2923 0%,#141E18 60%,#0E1712 100%);
+    border-bottom:1px solid rgba(217,184,106,.16);}
+  #adminView .kpi{background:rgba(255,255,255,.045);border-color:rgba(236,229,210,.12);
+    backdrop-filter:blur(8px);box-shadow:0 12px 34px -20px rgba(0,0,0,.6)}
+  #adminView .kpis{margin-top:22px}
+  /* 모바일 히어로 보정 */
+  #studentView .head h1{word-break:keep-all;overflow-wrap:break-word}
+  @media(max-width:560px){
+    #studentView .head{padding-top:42px;padding-bottom:32px}
+    #studentView .head h1{font-size:25px;line-height:1.28}
+    #studentView .head .sub{font-size:13.5px}
+    #studentView section{padding:36px 0}
+    #adminView .ahead{padding-top:38px}
+  }
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -905,7 +970,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v18-chalkboard-0820";
+  var BUILD_VERSION = "v19-homepage-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
