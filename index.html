@@ -229,6 +229,30 @@
   .twbtns{display:flex;gap:10px;justify-content:flex-end;margin:6px 0 40px}
   .btn-ghost{font-size:14.5px;font-weight:800;background:var(--card);color:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:14px 24px}
   .btn-ghost:hover{border-color:#C9D2DC}
+  /* 관리자 상세 */
+  .dbtn{font-size:12px;font-weight:800;background:var(--bg);border:1px solid var(--line);color:var(--ink2);border-radius:8px;padding:6px 12px}
+  .dbtn:hover{border-color:var(--green);color:var(--green)}
+  #memberDetailView{padding-top:22px}
+  .mdprofile{display:flex;align-items:center;gap:15px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);margin-bottom:16px}
+  .mdav{width:56px;height:56px;flex:none;border-radius:50%;background:var(--green-s);color:var(--green2);display:grid;place-items:center;font-size:22px;font-weight:850}
+  .mdpi{flex:1;min-width:0} .mdpi h2{font-size:21px;font-weight:850}
+  .mdmeta{font-size:13px;color:var(--muted);font-weight:600;margin-top:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .kickbtn{flex:none;font-size:13px;font-weight:800;background:#fff;border:1px solid var(--red);color:var(--red);border-radius:10px;padding:9px 16px}
+  .kickbtn:hover{background:var(--red-s)}
+  .mdsub{margin-bottom:12px}
+  .mdsh{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+  .mdsh b{font-size:15px;font-weight:800}
+  .mdempty{color:var(--muted);font-size:13.5px;font-weight:600;padding:6px 0}
+  .mdstats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .mds{flex:1;min-width:120px;background:var(--bg);border-radius:11px;padding:12px 15px}
+  .mds span{font-size:11.5px;color:var(--muted);font-weight:700;display:block}
+  .mds b{font-size:18px;font-weight:850;letter-spacing:-.02em}
+  .mds.net{background:var(--ink);color:#fff} .mds.net span{color:#9FB0C4} .mds.net b{color:#7CE0A0}
+  .mdlbl{font-size:12.5px;font-weight:800;color:var(--ink2);margin:14px 0 8px}
+  .mdnote{background:var(--bg);border-radius:11px;padding:14px 16px;font-size:13.5px;line-height:1.7;color:var(--ink2);white-space:pre-wrap}
+  .rmtbl.mdrm input{display:none} .rmtbl.mdrm td{padding:9px 10px;font-size:13px;color:var(--ink2)}
+  #mdMemo{width:100%;min-height:90px;font-family:inherit;font-size:14px;line-height:1.6;border:1px solid #EAD9A8;border-radius:12px;padding:13px 15px;background:#fff;resize:vertical}
+  #mdMemo:focus{outline:none;border-color:var(--amber)}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -346,7 +370,7 @@
       </div>
       <div class="tbl">
         <table>
-          <thead><tr><th style="text-align:left">수강생</th><th>OT</th><th>1주</th><th>2주</th><th>3주</th><th>4주</th><th>진도</th><th>상태</th><th>가입일</th></tr></thead>
+          <thead><tr><th style="text-align:left">수강생</th><th>OT</th><th>1주</th><th>2주</th><th>3주</th><th>4주</th><th>진도</th><th>상태</th><th>가입일</th><th></th></tr></thead>
           <tbody id="mBody"></tbody>
         </table>
       </div>
@@ -358,6 +382,20 @@
     </div>
 
     <p class="fsub" style="text-align:center;margin-top:18px">※ 이름·연락처·입금 등 민감정보는 구글시트에서 안전하게 관리됩니다</p>
+  </div>
+</div>
+
+<!-- ===== 수강생 상세 (관리자) ===== -->
+<div id="memberDetailView" class="hide">
+  <div class="wrap">
+    <button id="mdBack" class="twback">← 수강생 명단으로</button>
+    <div id="mdHead"></div>
+    <div id="mdSubs"></div>
+    <div class="fcard" style="background:#FFFBEB;border-color:#F5E4B8">
+      <h3>📝 관리자 메모</h3><p class="fsub2">수강생에게는 보이지 않아요.</p>
+      <textarea id="mdMemo" placeholder="이 수강생에 대한 메모를 남겨주세요..."></textarea>
+      <div style="text-align:right;margin-top:10px"><button id="mdSaveMemo" class="submit" style="width:auto;padding:11px 22px">메모 저장</button></div>
+    </div>
   </div>
 </div>
 
@@ -484,7 +522,7 @@
   function saveSub(status){
     if(!window.__me){toast('로그인이 필요해요');return;}
     var d=collect();
-    fetch(window.SUPA_URL+'/rest/v1/submissions',{method:'POST',
+    fetch(window.SUPA_URL+'/rest/v1/submissions?on_conflict=kakao_id,week',{method:'POST',
       headers:{apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json', Prefer:'resolution=merge-duplicates'},
       body:JSON.stringify({kakao_id:window.__me.id, nickname:window.__me.nick, week:curW, assets:d.assets, roadmap:d.roadmap, note:d.note, status:status, updated_at:new Date().toISOString()})
     }).then(function(r){
@@ -512,10 +550,11 @@
     var list=members.filter(function(m){return (curF==='all'||m.st===curF)&&(!curQ||m.nm.indexOf(curQ)>-1);});
     mBody.innerHTML=list.length?list.map(function(m){
       var done=m.w.reduce(function(a,b){return a+b;},0),pct=Math.round(done/5*100);
-      return '<tr><td class="nm">'+m.nm+'</td>'+m.w.map(function(v){return '<td>'+mark(v)+'</td>';}).join('')+
+      return '<tr'+(m.removed?' style="opacity:.45"':'')+'><td class="nm">'+m.nm+'</td>'+m.w.map(function(v){return '<td>'+mark(v)+'</td>';}).join('')+
         '<td><div class="mini"><i style="width:'+pct+'%"></i></div><div style="font-size:10.5px;margin-top:3px;color:var(--muted)">'+pct+'%</div></td>'+
-        '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td>'+m.act+'</td></tr>';
-    }).join('') : '<tr><td colspan="9" class="empty"><b>아직 등록된 수강생이 없어요</b>카카오로 로그인하면 여기에 자동으로 표시돼요</td></tr>';
+        '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td>'+m.act+'</td>'+
+        '<td><button class="dbtn" data-kid="'+m.kid+'" data-nm="'+m.nm+'">상세</button></td></tr>';
+    }).join('') : '<tr><td colspan="10" class="empty"><b>아직 등록된 수강생이 없어요</b>카카오로 로그인하면 여기에 자동으로 표시돼요</td></tr>';
     $('cntNote').textContent='표시 '+list.length+'명 / 전체 '+members.length+'명';
   }
   function paintMembers(){
@@ -553,6 +592,66 @@
     b.classList.add('on');curF=b.dataset.f;renderM();});});
   $('search').addEventListener('input',function(e){curQ=e.target.value.trim();renderM();});
 
+  /* ===== 수강생 상세 (제출물 열람) ===== */
+  var curKid=null;
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function openMemberDetail(kid, nm){
+    curKid=kid;
+    var m=members.filter(function(x){return x.kid===kid;})[0]||{nm:nm,w:[0,0,0,0,0]};
+    var pct=Math.round(m.w.reduce(function(a,b){return a+b;},0)/5*100);
+    $('mdHead').innerHTML='<div class="mdprofile"><div class="mdav">'+esc((nm||'?').charAt(0))+'</div>'+
+      '<div class="mdpi"><h2>'+esc(nm)+'</h2><div class="mdmeta">가입 '+esc(m.act||'—')+' · 진도 '+pct+'% · <span class="pill '+m.st+'">'+stLabel[m.st]+'</span></div></div>'+
+      '<button id="mdKick" class="kickbtn">'+(m.removed?'강퇴 취소':'강퇴하기')+'</button></div>';
+    $('mdSubs').innerHTML='<div class="fcard"><div class="mdempty">불러오는 중...</div></div>';
+    var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY};
+    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(kid)+'&select=week,status,assets,roadmap,note,updated_at&order=week',{headers:H})
+      .then(function(r){return r.json();}).then(function(rows){ renderSubs(Array.isArray(rows)?rows:[]); }).catch(function(){renderSubs([]);});
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(kid)+'&select=memo',{headers:H})
+      .then(function(r){return r.json();}).then(function(rows){ if(rows&&rows[0])$('mdMemo').value=rows[0].memo||''; }).catch(function(){});
+    document.querySelector('nav').classList.remove('hide');
+    $('adminView').classList.add('hide'); $('studentView').classList.add('hide'); $('memberDetailView').classList.remove('hide'); window.scrollTo(0,0);
+    $('mdKick').addEventListener('click',function(){ toggleKick(m); });
+  }
+  function renderSubs(rows){
+    var byWk={}; rows.forEach(function(r){byWk[r.week]=r;});
+    $('mdSubs').innerHTML=wkMeta.map(function(w){
+      var s=byWk[w.n];
+      var badge=s?'<span class="tbadge '+(s.status==='제출'?'done':'tmp')+'">'+esc(s.status)+'</span>':'<span class="tbadge no">미작성</span>';
+      var head='<div class="mdsh"><b>'+w.label+' · '+w.title+'</b>'+badge+'</div>';
+      if(!s)return '<div class="fcard mdsub">'+head+'<div class="mdempty">아직 작성 전이에요</div></div>';
+      var body='';
+      if(s.assets&&Object.keys(s.assets).length){
+        var a=['deposit','stock','pension','realestate','etcAsset'].reduce(function(t,k){return t+(s.assets[k]||0);},0);
+        var d=['mortgage','credit','etcDebt'].reduce(function(t,k){return t+(s.assets[k]||0);},0);
+        body+='<div class="mdstats"><div class="mds"><span>자산</span><b>'+a.toLocaleString()+'</b>만원</div>'+
+          '<div class="mds"><span>부채</span><b>'+d.toLocaleString()+'</b>만원</div>'+
+          '<div class="mds net"><span>순자산</span><b>'+(a-d).toLocaleString()+'</b>만원</div></div>';
+      }
+      if(s.roadmap&&Object.keys(s.roadmap).length){ body+=renderRoadmap(s.roadmap); }
+      if(s.note){ body+='<div class="mdlbl">💬 인증 글</div><div class="mdnote">'+esc(s.note)+'</div>'; }
+      if(!body)body='<div class="mdempty">내용이 비어 있어요</div>';
+      return '<div class="fcard mdsub">'+head+body+'</div>';
+    }).join('');
+  }
+  function renderRoadmap(rm){
+    var rows=rmPeriods.map(function(p,i){ var a=rm[i+'-a']||'',h=rm[i+'-h']||'',e=rm[i+'-e']||''; if(!a&&!h&&!e)return ''; return '<tr><td class="rp">'+p+'</td><td>'+esc(a)+'</td><td>'+esc(h)+'</td><td>'+esc(e)+'</td></tr>'; }).join('');
+    return rows?'<div class="mdlbl">🗺 통합 로드맵</div><div class="rmwrap"><table class="rmtbl mdrm"><thead><tr><th>시점</th><th>자산 목표</th><th>내 집</th><th>은퇴/기타</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'';
+  }
+  function toggleKick(m){
+    var nv=!m.removed;
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(curKid),{method:'PATCH',
+      headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({removed:nv})})
+     .then(function(r){ if(r.ok){ m.removed=nv; var k=$('mdKick');if(k)k.textContent=nv?'강퇴 취소':'강퇴하기'; toast(nv?'강퇴 처리했어요':'강퇴 취소했어요'); } else toast('실패 — 컬럼 추가 SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
+  }
+  $('mdSaveMemo').addEventListener('click',function(){
+    if(!curKid)return;
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(curKid),{method:'PATCH',
+      headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({memo:$('mdMemo').value})})
+     .then(function(r){ toast(r.ok?'메모 저장했어요':'저장 실패 — 컬럼 추가 SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
+  });
+  $('mdBack').addEventListener('click',function(){ $('memberDetailView').classList.add('hide'); $('adminView').classList.remove('hide'); window.scrollTo(0,0); });
+  mBody.addEventListener('click',function(e){ var b=e.target.closest('.dbtn'); if(b)openMemberDetail(b.dataset.kid, b.dataset.nm); });
+
   /* ===== 뷰 전환 ===== */
   var sv=$('studentView'),ad=$('adminView');
   function goto(v){
@@ -574,7 +673,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v13-tasks-0819";
+  var BUILD_VERSION = "v14-detail-0819";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
