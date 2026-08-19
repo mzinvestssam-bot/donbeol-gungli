@@ -456,6 +456,19 @@
     #studentView .head, #adminView .ahead{margin-top:16px;padding:24px 18px 28px;border-width:8px;border-radius:20px}
     #studentView .head h1{font-size:23px;line-height:1.32}
   }
+
+  /* ═══════════ ↔️ 칠판 풀와이드 (좌우 꽉차게) ═══════════ */
+  #studentView .head, #adminView .ahead{
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:0;margin-bottom:0;
+    padding-top:44px;padding-bottom:48px;
+    padding-left:calc(50vw - 50%);padding-right:calc(50vw - 50%);
+    border:9px solid #E9DBBB;border-radius:0;}
+  @media(max-width:560px){
+    #studentView .head, #adminView .ahead{
+      margin-top:0;padding-top:32px;padding-bottom:36px;
+      padding-left:calc(50vw - 50%);padding-right:calc(50vw - 50%);
+      border-width:7px;border-radius:0}
+  }
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -1023,7 +1036,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v23-green-board-0820";
+  var BUILD_VERSION = "v24-board-fullwide-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
