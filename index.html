@@ -103,6 +103,16 @@
   .vod{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:800;border:0;border-radius:10px;padding:9px 16px}
   .vod.play{background:var(--green);color:#fff} .vod.play:hover{background:var(--green2)}
   .vod.lock{background:var(--line2);color:var(--muted)}
+  .vodbox{margin-top:12px}
+  .vodwrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000}
+  .vodwrap iframe,.vodwrap video{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+  /* 운영방식 STEP */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:640px){.steps{grid-template-columns:1fr 1fr}}
+  .stp{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--sh)}
+  .stp .sn{font-size:11px;font-weight:800;color:var(--green);letter-spacing:.03em}
+  .stp .st{font-size:15px;font-weight:800;margin:6px 0 4px;letter-spacing:-.01em}
+  .stp .sd{font-size:12px;color:var(--muted);font-weight:600;line-height:1.5}
 
   /* 과제 */
   .tprog{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);margin-bottom:14px}
@@ -334,6 +344,16 @@
       </div>
     </div>
 
+    <section>
+      <div class="shead"><div><div class="sec-lbl">How it works</div><div class="sec-h">이렇게 진행돼요</div><div class="sec-s">한 번 신청하면 4주간 함께 가요</div></div></div>
+      <div class="steps">
+        <div class="stp"><div class="sn">STEP 01</div><div class="st">주차별 강의 시청</div><div class="sd">매주 일요일에 그 주차 강의가 열려요</div></div>
+        <div class="stp"><div class="sn">STEP 02</div><div class="st">과제 작성·인증</div><div class="sd">주차별 과제를 게시판에 제출해요</div></div>
+        <div class="stp"><div class="sn">STEP 03</div><div class="st">1:1 트레이닝</div><div class="sd">금융쌤과 내 상황 맞춤으로 함께</div></div>
+        <div class="stp"><div class="sn">STEP 04</div><div class="st">완주 → 페이백</div><div class="sd">4주 완주하면 참가비 전액 환급</div></div>
+      </div>
+    </section>
+
     <section id="lecture">
       <div class="shead">
         <div><div class="sec-lbl">Curriculum</div><div class="sec-h">강의실</div><div class="sec-s">매주 일요일 새 강의가 열려요</div></div>
@@ -499,17 +519,30 @@
      pts:['프롭테크 활용법 (호갱노노·아실)','효율적인 임장법','내 집 후보 3곳 찾기']}
   ];
   var lecs=$('lecs');
-  weeks.forEach(function(w){
+  weeks.forEach(function(w,wi){
     var d=document.createElement('div');d.className='lec '+w.cls;
     var pts=w.pts.map(function(p){return '<li>'+p+'</li>';}).join('');
-    var btn=w.live?'<button class="vod play" data-t="강의 재생 (실제 운영 시 VOD가 열려요)">▶ 강의 보기</button>'
+    var btn=w.live?'<button class="vod play" data-vod="'+wi+'">▶ 강의 보기</button><div class="vodbox" id="vodbox'+wi+'"></div>'
                   :'<button class="vod lock">🔒 '+w.date+'</button>';
     d.innerHTML='<div class="idx"><div class="wk">'+w.wk+'</div><div class="cir">'+w.em+'</div></div>'+
       '<div class="body"><div class="top"><span class="who '+w.cls+'">'+w.who+'</span>'+
       '<span class="stt '+(w.live?'on':'soon')+'">'+(w.live?'공개중':'예정')+'</span></div>'+
       '<h3>'+w.title+'</h3><ul>'+pts+'</ul><div class="foot">'+btn+'</div></div>';
     lecs.appendChild(d);
+    var pb=d.querySelector('.vod.play'); if(pb)pb.addEventListener('click',function(){playVod(wi);});
   });
+  function embedHtml(url){
+    var yt=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/);
+    if(yt)return '<div class="vodwrap"><iframe src="https://www.youtube.com/embed/'+yt[1]+'" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
+    if(/\.mp4($|\?)/i.test(url))return '<div class="vodwrap"><video src="'+url+'" controls playsinline></video></div>';
+    return '<div class="vodwrap"><iframe src="'+url+'" allowfullscreen></iframe></div>';
+  }
+  function playVod(wi){
+    var w=weeks[wi], box=$('vodbox'+wi); if(!box)return;
+    if(box.innerHTML){box.innerHTML='';return;}
+    if(!w.vod){ toast('영상은 강의 오픈일에 열려요'); return; }
+    box.innerHTML=embedHtml(w.vod);
+  }
 
   /* ===== 과제 게시판 / 제출 (Supabase) ===== */
   function hdr(){return {apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY};}
@@ -821,7 +854,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v16-train-0819";
+  var BUILD_VERSION = "v17-step-vod-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
