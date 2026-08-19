@@ -263,6 +263,24 @@
   .fpx{position:absolute;top:4px;right:4px;width:22px;height:22px;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:14px;font-weight:800;line-height:1;cursor:pointer}
   .mdfiles{display:flex;flex-wrap:wrap;gap:10px}
   .mdfiles img{width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+  /* 트레이닝 선호 (수강생) */
+  .tpcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh)}
+  .tpq{font-size:14px;font-weight:800;margin-bottom:9px}
+  .tpopts{display:flex;gap:10px;flex-wrap:wrap}
+  .tpopts button{flex:1;min-width:110px;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px;text-align:center;color:var(--ink2)}
+  .tpopts button b{display:block;font-size:14px;font-weight:800;color:var(--ink)} .tpopts button small{font-size:11.5px;color:var(--muted);font-weight:600}
+  .tpopts button:hover{border-color:#C9D2DC}
+  .tpopts button.on{border-color:var(--green);background:var(--green-s);box-shadow:0 0 0 2px rgba(22,163,74,.12)}
+  .tpopts button.on b{color:var(--green2)}
+  .tpdone{font-size:13px;font-weight:800;color:var(--green);margin-top:14px;min-height:18px}
+  /* 트레이닝 현황표 */
+  .tfbtn{font-size:12.5px;font-weight:700;border-radius:100px;padding:7px 14px;background:var(--bg);border:1px solid var(--line);color:var(--ink2)}
+  .tfbtn:hover{border-color:#C9D2DC} .tfbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tchip{font-size:11.5px;font-weight:700;background:var(--bg);border:1px solid var(--line);border-radius:100px;padding:4px 11px;color:var(--ink2)}
+  .tchip.pl{background:var(--green-s);border-color:#BBE6C8;color:var(--green2)}
+  .stog{display:inline-flex;gap:3px;background:var(--bg);border:1px solid var(--line);border-radius:100px;padding:3px}
+  .stb{font-size:11px;font-weight:800;border:0;border-radius:100px;padding:5px 11px;background:transparent;color:var(--muted);cursor:pointer}
+  .stb.on.ok{background:var(--green);color:#fff} .stb.on.late{background:var(--amber);color:#fff} .stb.on.risk{background:#94A3B8;color:#fff}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -291,6 +309,7 @@
     <div class="nl">
       <button data-go="lecture">강의실</button>
       <button data-go="task">과제</button>
+      <button data-go="train">트레이닝</button>
       <button data-go="admin" id="navAdmin" class="admin hide">🔑 관리자</button>
       <button class="out" id="kakaoLogout">로그아웃</button>
     </div>
@@ -332,6 +351,17 @@
         <div class="msg" id="pmsg">아직 제출한 과제가 없어요. 이번 주 과제부터 작성해봐요</div>
       </div>
       <div id="taskBoard"></div>
+    </section>
+
+    <section id="trainpref">
+      <div class="shead"><div><div class="sec-lbl">Training</div><div class="sec-h">1:1 트레이닝 선호</div><div class="sec-s">금융쌤과의 1:1 트레이닝, 편한 시간·장소를 골라주세요</div></div></div>
+      <div class="tpcard">
+        <div class="tpq">🕐 선호 시간</div>
+        <div class="tpopts" id="prefTime"><button data-pref="평일"><b>평일</b><small>월~금 저녁</small></button><button data-pref="주말"><b>주말</b><small>토·일 낮</small></button></div>
+        <div class="tpq" style="margin-top:16px">📍 선호 장소</div>
+        <div class="tpopts" id="prefPlace"><button data-place="강남"><b>강남 대면</b></button><button data-place="성남"><b>성남 대면</b></button><button data-place="ZOOM"><b>비대면 ZOOM</b></button></div>
+        <div class="tpdone" id="prefDone"></div>
+      </div>
     </section>
 
     <section>
@@ -392,6 +422,34 @@
     </div>
 
     <p class="fsub" style="text-align:center;margin-top:18px">※ 이름·연락처·입금 등 민감정보는 구글시트에서 안전하게 관리됩니다</p>
+  </div>
+</div>
+
+<!-- ===== 트레이닝 현황표 ===== -->
+<div id="trainView" class="hide">
+  <div class="wrap">
+    <div class="ahead">
+      <span class="tag" style="background:var(--green)">TRAINING</span>
+      <h1>트레이닝 현황표</h1>
+      <div class="sub">수강생의 1:1 트레이닝 신청·진행 상태를 한눈에</div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">전체</div><div class="v" id="trAll">0<small>명</small></div></div>
+        <div class="kpi"><div class="k">진행중</div><div class="v" id="trProg" style="color:var(--green)">0</div></div>
+        <div class="kpi"><div class="k">예정</div><div class="v" id="trPlan" style="color:var(--amber)">0</div></div>
+        <div class="kpi"><div class="k">미정</div><div class="v" id="trNone" style="color:var(--muted)">0</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="fbar">
+        <button class="tfbtn on" data-tf="all">전체</button>
+        <button class="tfbtn" data-tf="진행중">진행중</button>
+        <button class="tfbtn" data-tf="예정">예정</button>
+        <button class="tfbtn" data-tf="미정">미정</button>
+        <input class="search" id="trSearch" placeholder="이름 검색">
+      </div>
+      <div class="tbl"><table><thead><tr><th style="text-align:left">수강생</th><th>선호 시간</th><th>선호 장소</th><th>트레이닝 상태</th></tr></thead><tbody id="trBody"></tbody></table></div>
+      <p class="fsub" id="trHint" style="text-align:left;margin-top:12px"></p>
+    </div>
   </div>
 </div>
 
@@ -689,11 +747,64 @@
   $('mdBack').addEventListener('click',function(){ $('memberDetailView').classList.add('hide'); $('adminView').classList.remove('hide'); window.scrollTo(0,0); });
   mBody.addEventListener('click',function(e){ var b=e.target.closest('.dbtn'); if(b)openMemberDetail(b.dataset.kid, b.dataset.nm); });
 
+  /* ===== 트레이닝 현황표 ===== */
+  var trainees=[], trF='all', trQ='', myPref={};
+  var stMap={'진행중':'ok','예정':'late','미정':'risk'};
+  function loadTrain(){
+    if(!window.SUPA_URL)return;
+    fetch(window.SUPA_URL+'/rest/v1/members?select=kakao_id,nickname,train_pref,train_place,train_status&order=joined_at.desc',{headers:hdr()})
+      .then(function(r){return r.json();}).then(function(rows){
+        if(!Array.isArray(rows))return; trainees=rows; renderTrain();
+        if(window.__me){ var me=rows.filter(function(x){return x.kakao_id===window.__me.id;})[0]; if(me){myPref={pref:me.train_pref,place:me.train_place}; paintPref();} }
+      }).catch(function(){});
+  }
+  window.__loadTrain=loadTrain;
+  function renderTrain(){
+    var tb=$('trBody'); if(!tb)return;
+    var list=trainees.filter(function(m){var st=m.train_status||'미정'; return (trF==='all'||st===trF)&&(!trQ||(m.nickname||'').indexOf(trQ)>-1);});
+    tb.innerHTML=list.length?list.map(function(m){
+      var st=m.train_status||'미정';
+      var status = window.__isAdmin
+        ? '<div class="stog">'+['미정','예정','진행중'].map(function(o){return '<button class="stb'+(st===o?' on '+stMap[o]:'')+'" data-kid="'+m.kakao_id+'" data-st="'+o+'">'+o+'</button>';}).join('')+'</div>'
+        : '<span class="pill '+stMap[st]+'">'+st+'</span>';
+      return '<tr><td class="nm">'+esc(m.nickname||'(이름없음)')+'</td>'+
+        '<td>'+(m.train_pref?'<span class="tchip">'+esc(m.train_pref)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
+        '<td>'+(m.train_place?'<span class="tchip pl">'+esc(m.train_place)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
+        '<td>'+status+'</td></tr>';
+    }).join('') : '<tr><td colspan="4" class="empty">아직 트레이닝 신청자가 없어요</td></tr>';
+    var c={'진행중':0,'예정':0,'미정':0}; trainees.forEach(function(m){c[m.train_status||'미정']++;});
+    $('trAll').innerHTML=trainees.length+'<small>명</small>'; $('trProg').textContent=c['진행중']; $('trPlan').textContent=c['예정']; $('trNone').textContent=c['미정'];
+    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미정 → 예정 → 진행중으로 바꿀 수 있어요.' : '＊이미 '+(c['진행중']+c['예정'])+'명이 트레이닝을 신청했어요!';
+    if(window.__isAdmin){ tb.querySelectorAll('.stb').forEach(function(b){ b.addEventListener('click',function(){ setTrainStatus(b.dataset.kid,b.dataset.st); }); }); }
+  }
+  function setTrainStatus(kid,st){
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(kid),{method:'PATCH',
+      headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({train_status:st})})
+     .then(function(r){ if(r.ok){ var m=trainees.filter(function(x){return x.kakao_id===kid;})[0]; if(m)m.train_status=st; renderTrain(); toast('상태 → '+st); } else toast('실패 — 컬럼 SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
+  }
+  function savePref(field,val){
+    if(!window.__me){toast('로그인이 필요해요');return;}
+    var body={}; body[field]=val;
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(window.__me.id),{method:'PATCH',
+      headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)})
+     .then(function(r){ if(r.ok){ if(field==='train_pref')myPref.pref=val; else myPref.place=val; paintPref(); toast('저장했어요'); } else toast('실패 — 컬럼 SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
+  }
+  function paintPref(){
+    document.querySelectorAll('#prefTime button').forEach(function(b){b.classList.toggle('on',b.dataset.pref===myPref.pref);});
+    document.querySelectorAll('#prefPlace button').forEach(function(b){b.classList.toggle('on',b.dataset.place===myPref.place);});
+    var pd=$('prefDone'); if(pd)pd.textContent=(myPref.pref&&myPref.place)?('✓ '+myPref.pref+' · '+myPref.place+'로 신청됐어요'):'';
+  }
+  document.querySelectorAll('#prefTime button').forEach(function(b){b.addEventListener('click',function(){savePref('train_pref',b.dataset.pref);});});
+  document.querySelectorAll('#prefPlace button').forEach(function(b){b.addEventListener('click',function(){savePref('train_place',b.dataset.place);});});
+  document.querySelectorAll('.tfbtn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.tfbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');trF=b.dataset.tf;renderTrain();});});
+  $('trSearch').addEventListener('input',function(e){trQ=e.target.value.trim();renderTrain();});
+
   /* ===== 뷰 전환 ===== */
-  var sv=$('studentView'),ad=$('adminView');
+  var sv=$('studentView'),ad=$('adminView'),trv=$('trainView');
   function goto(v){
-    if(v==='admin'){sv.classList.add('hide');ad.classList.remove('hide');window.scrollTo(0,0);return;}
-    ad.classList.add('hide');sv.classList.remove('hide');
+    if(v==='admin'){sv.classList.add('hide');trv.classList.add('hide');ad.classList.remove('hide');window.scrollTo(0,0);return;}
+    if(v==='train'){sv.classList.add('hide');ad.classList.add('hide');trv.classList.remove('hide');if(window.__loadTrain)window.__loadTrain();window.scrollTo(0,0);return;}
+    ad.classList.add('hide');trv.classList.add('hide');sv.classList.remove('hide');
     var el=$(v==='lecture'?'lecture':(v==='task'?'task':'studentView'));
     if(el&&(v==='lecture'||v==='task'))el.scrollIntoView({block:'start'});else window.scrollTo(0,0);
   }
@@ -710,7 +821,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v15-files-0819";
+  var BUILD_VERSION = "v16-train-0819";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
@@ -752,8 +863,10 @@
         var myId=String(res.id);
         saveMember(myId, nick);
         window.__me={id:String(myId), nick:nick};
-        if(checkAdmin(nick, myId)){ if(window.__refreshRoster) window.__refreshRoster(); }
+        window.__isAdmin=checkAdmin(nick, myId);
+        if(window.__isAdmin){ if(window.__refreshRoster) window.__refreshRoster(); }
         else { if(window.__loadMy) window.__loadMy(); }
+        if(window.__loadTrain) window.__loadTrain();
         route(nick, myId);
       })
       .catch(function(e){ showErr('정보를 불러오지 못했어요: ' + (e && (e.msg||e.message) ? (e.msg||e.message) : '다시 시도해 주세요')); });
