@@ -365,6 +365,40 @@
     #adminView .ahead{padding-top:40px}
     #adminView .kpis{margin-top:16px}
   }
+
+  /* ═══════════ 🍯 따뜻한 인포그래픽 무드 (너궁리 로드맵 감성) ═══════════ */
+  :root{--bg:#FBF5EA;--card:#FFFEFB;--line:#ECE3D2;--line2:#F4EEE1}
+  body{background:radial-gradient(94% 44% at 50% 0%, #FBEAD5, transparent 62%), #FBF5EA;}
+  nav{background:rgba(255,253,248,.84);border-bottom:1px solid #EFE6D6}
+  /* 히어로: 네이비 유지하되 따뜻한 앰버 글로우 첨가 */
+  #studentView .head, #adminView .ahead{
+    background:
+      radial-gradient(72% 120% at 86% -12%, rgba(240,172,84,.34), transparent 55%),
+      radial-gradient(58% 100% at 5% 122%, rgba(120,200,110,.16), transparent 60%),
+      linear-gradient(158deg,#0C1526 0%,#132A4C 54%,#20408F 122%);}
+  /* 섹션 밴드: 크림 / 소프트 그린 교차 */
+  #studentView section:nth-of-type(2n){
+    background:linear-gradient(180deg,#FBF3E4 0%,#FFFEFB 100%);border-top-color:#F0E6D2;border-bottom-color:#F0E6D2}
+  #studentView section:nth-of-type(4n){
+    background:linear-gradient(180deg,#F2F8EC 0%,#FDFCF7 100%)!important;border-top-color:#E4EFDA!important;border-bottom-color:#E4EFDA!important}
+  /* 섹션 헤더 액센트 바 (따뜻하게) */
+  .shead .sec-h::before{background:linear-gradient(90deg,#E8863C,#F2B06A)}
+  .sec-lbl{color:#C6772F}
+
+  /* ── STEP 카드 = 4색 컬러코딩 인포그래픽 ── */
+  .steps{gap:14px}
+  .stp{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:0 0 15px;
+    overflow:hidden;box-shadow:0 10px 26px -16px rgba(120,90,40,.22)}
+  .stp .sn{display:inline-block;font-size:12px;font-weight:800;color:#fff;padding:7px 15px;
+    border-radius:0 0 14px 0;letter-spacing:.05em}
+  .stp .st{font-size:16px;font-weight:800;margin:12px 15px 9px;letter-spacing:-.01em;color:var(--ink)}
+  .schk{list-style:none;margin:0 15px;display:grid;gap:6px;padding:0}
+  .schk li{font-size:12.5px;font-weight:600;color:#6A6152;display:flex;gap:7px;align-items:flex-start;line-height:1.45}
+  .schk li::before{content:"✓";font-weight:900;flex:none}
+  .stp.s1{border-color:#F1D3B4;background:linear-gradient(180deg,#FFF7EE,#FFFEFB)} .stp.s1 .sn{background:#E8863C} .stp.s1 .schk li::before{color:#E8863C}
+  .stp.s2{border-color:#CFE6C2;background:linear-gradient(180deg,#F5FBEF,#FFFEFB)} .stp.s2 .sn{background:#5DA544} .stp.s2 .schk li::before{color:#5DA544}
+  .stp.s3{border-color:#C4D8EE;background:linear-gradient(180deg,#F1F7FC,#FFFEFB)} .stp.s3 .sn{background:#4A78B8} .stp.s3 .schk li::before{color:#4A78B8}
+  .stp.s4{border-color:#D9CBEB;background:linear-gradient(180deg,#F7F1FC,#FFFEFB)} .stp.s4 .sn{background:#8B6FB0} .stp.s4 .schk li::before{color:#8B6FB0}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -421,10 +455,14 @@
     <section>
       <div class="shead"><div><div class="sec-lbl">How it works</div><div class="sec-h">이렇게 진행돼요</div><div class="sec-s">한 번 신청하면 4주간 함께 가요</div></div></div>
       <div class="steps">
-        <div class="stp"><div class="sn">STEP 01</div><div class="st">주차별 강의 시청</div><div class="sd">매주 일요일에 그 주차 강의가 열려요</div></div>
-        <div class="stp"><div class="sn">STEP 02</div><div class="st">과제 작성·인증</div><div class="sd">주차별 과제를 게시판에 제출해요</div></div>
-        <div class="stp"><div class="sn">STEP 03</div><div class="st">1:1 트레이닝</div><div class="sd">금융쌤과 내 상황 맞춤으로 함께</div></div>
-        <div class="stp"><div class="sn">STEP 04</div><div class="st">완주 → 페이백</div><div class="sd">4주 완주하면 참가비 전액 환급</div></div>
+        <div class="stp s1"><div class="sn">STEP 01</div><div class="st">주차별 강의 시청</div>
+          <ul class="schk"><li>매주 일요일 강의 오픈</li><li>영상으로 반복 학습</li></ul></div>
+        <div class="stp s2"><div class="sn">STEP 02</div><div class="st">과제 작성·인증</div>
+          <ul class="schk"><li>자산표·로드맵 작성</li><li>게시판에 인증글 제출</li></ul></div>
+        <div class="stp s3"><div class="sn">STEP 03</div><div class="st">1:1 트레이닝</div>
+          <ul class="schk"><li>내 상황 맞춤 코칭</li><li>금융쌤과 직접</li></ul></div>
+        <div class="stp s4"><div class="sn">STEP 04</div><div class="st">완주 → 페이백</div>
+          <ul class="schk"><li>4주 완주 시</li><li>참가비 전액 환급</li></ul></div>
       </div>
     </section>
 
@@ -928,7 +966,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v20-busangu-light-0820";
+  var BUILD_VERSION = "v21-warm-infographic-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
