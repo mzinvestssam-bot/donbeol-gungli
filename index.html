@@ -292,120 +292,78 @@
   .stb{font-size:11px;font-weight:800;border:0;border-radius:100px;padding:5px 11px;background:transparent;color:var(--muted);cursor:pointer}
   .stb.on.ok{background:var(--green);color:#fff} .stb.on.late{background:var(--amber);color:#fff} .stb.on.risk{background:#94A3B8;color:#fff}
 
-  /* ═══════════════ 🖤 PREMIUM CHALKBOARD SKIN ═══════════════ */
-  :root{
-    --bg:#131A16; --card:#1C241F; --line:rgba(236,229,210,.13); --line2:rgba(236,229,210,.07);
-    --ink:#F1ECDD; --ink2:#C6CCBE; --muted:#8C9488;
-    --green:#D9B86A; --green2:#EBD08C; --green-s:rgba(217,184,106,.15);   /* 브라스 골드 = 메인 액센트 */
-    --blue:#82B4EE; --blue-s:rgba(130,180,238,.14);
-    --amber:#E3AC4E; --amber-s:rgba(227,172,78,.15);
-    --red:#E9787C; --red-s:rgba(233,120,124,.15);
-    --kakao:#FEE500;
-    --sh:0 10px 30px -14px rgba(0,0,0,.62); --sh2:0 18px 46px -16px rgba(0,0,0,.72);
-  }
-  body{color:var(--ink);
-    background:
-      radial-gradient(120% 55% at 18% 0%, rgba(240,236,224,.035), transparent 46%),
-      radial-gradient(90% 50% at 92% 24%, rgba(240,236,224,.022), transparent 52%),
-      radial-gradient(90% 62% at 50% 104%, rgba(217,184,106,.055), transparent 58%),
-      var(--bg);
-    background-attachment:fixed;}
-  h1,h2,h3{color:var(--ink)}
-  .head h1,.gate h1,.ahead h1{text-shadow:0 1px 2px rgba(0,0,0,.38)}
-  nav{background:rgba(19,25,21,.82);border-bottom-color:var(--line)}
-  .nb .dot{box-shadow:0 0 8px rgba(217,184,106,.6)}
-  /* 카드 질감: 상단 분필빛 하이라이트 + 골드 hover */
-  .pcard,.kpi,.tc,.lec,.stp,.panel,.tprog,.tgrp,.tcardw,.fcard,.mdprofile,.tpcard,.gate{
-    box-shadow:inset 0 1px 0 rgba(240,236,224,.05), var(--sh)}
-  .lec:hover{border-color:rgba(217,184,106,.42)}
-  /* 채워진 골드 버튼/배지 → 글자 어둡게 */
-  .stt.on,.submit,.twrite,.vod.play,.stb.on.ok{color:#1c1608}
-  .bar i{background:linear-gradient(90deg,var(--green2),var(--green))}
-  /* var(--ink)를 '어두운 면'으로 쓰던 요소들 복구 */
-  .ahead .tag{background:var(--green);color:#1c1608}
-  .fbtn.on,.tfbtn.on{background:var(--green);color:#1c1608;border-color:var(--green)}
-  .netbox,.mds.net{background:#0E1512}
-  .toast{background:#0B120E;color:#F1ECDD;border:1px solid var(--line)}
-  /* 흰 배경 하드코딩 → 다크 면으로 */
-  .search:focus,.mrow input:focus,#twForm textarea:focus{background:var(--card)}
-  .kickbtn{background:var(--card)}
-  #mdMemo{background:var(--bg);border-color:var(--line)}
-  .gate .av img{border-color:var(--card)}
-  /* 라이트 글로우 → 골드빛 글로우 */
-  #loginGate{background:radial-gradient(85% 55% at 50% -6%, rgba(217,184,106,.11), transparent 60%),var(--bg)}
-  .pay{background-image:radial-gradient(120% 80% at 50% 0%, rgba(217,184,106,.11), transparent 60%)}
-  /* 파랑·앰버 텍스트 다크 대비 보정 */
-  .who.h{color:var(--blue)}
-  .twh .twdue,.pill.late,.tbadge.tmp{color:var(--amber)}
-  .tpopts button.on{box-shadow:0 0 0 2px rgba(217,184,106,.2)}
-  .mk.n{color:#5A6560}
-  .wbar i.na{background:rgba(236,229,210,.13)}
-  .tsk:has(input:checked){border-color:rgba(217,184,106,.32)}
-  .tsk:has(input:checked) span{text-decoration-color:rgba(217,184,106,.5)}
-
-  /* ═══════════ 🏛 홈페이지급 구조 격상 ═══════════ */
+  /* ═══════════ ☀️ 부상구 스타일 · 라이트 홈페이지 스킨 ═══════════ */
   html{overflow-x:clip}
-  /* ── 글래시 네비 강화 ── */
-  nav{box-shadow:0 6px 24px -16px rgba(0,0,0,.7);border-bottom:1px solid rgba(217,184,106,.14)}
-  nav .nb .dot{background:var(--green)}
+  body{background:radial-gradient(92% 42% at 50% 0%, #EDF3FB, transparent 62%), #F6F8FB;}
+  nav{background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid #E7ECF2;box-shadow:0 4px 22px -16px rgba(21,33,54,.35)}
 
-  /* ── HERO 밴드 (수강생) ── */
+  /* ── HERO 밴드 (네이비 그라데이션) ── */
   #studentView .head{
-    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
-    padding:58px calc(50vw - 50%) 40px;margin-top:0;
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:0;
+    padding:60px calc(50vw - 50%) 46px;
     background:
-      radial-gradient(78% 120% at 88% -12%, rgba(217,184,106,.17), transparent 55%),
-      radial-gradient(60% 90% at 6% 118%, rgba(217,184,106,.07), transparent 60%),
-      linear-gradient(165deg,#1E2923 0%,#141E18 58%,#0E1712 100%);
-    border-bottom:1px solid rgba(217,184,106,.16);
-    box-shadow:inset 0 -50px 70px -60px rgba(0,0,0,.7);}
-  #studentView .head h1{font-size:34px;margin-top:14px;letter-spacing:-.035em}
-  #studentView .head .sub{font-size:15px;color:#D6DCCE;max-width:44ch}
-  #studentView .head .badge{background:rgba(217,184,106,.16);color:var(--green2);border:1px solid rgba(217,184,106,.32)}
-  /* 히어로 위 카드들 = 유리 질감 */
-  #studentView .head .tc{background:rgba(255,255,255,.05);border-color:rgba(236,229,210,.13);backdrop-filter:blur(6px)}
-  #studentView .head .prow{margin-top:22px}
-  #studentView .head .pcard{background:rgba(255,255,255,.045);border-color:rgba(236,229,210,.12);
-    backdrop-filter:blur(8px);box-shadow:0 12px 34px -20px rgba(0,0,0,.6)}
+      radial-gradient(72% 120% at 86% -12%, rgba(59,130,246,.42), transparent 55%),
+      radial-gradient(60% 100% at 4% 122%, rgba(126,217,87,.20), transparent 60%),
+      linear-gradient(158deg,#0B1526 0%,#122A4C 54%,#1E3A8A 120%);
+    color:#fff;}
+  #studentView .head h1{color:#fff;font-size:35px;margin-top:14px;letter-spacing:-.035em;
+    text-shadow:0 2px 12px rgba(0,0,0,.28);word-break:keep-all;overflow-wrap:break-word}
+  #studentView .head .sub{color:#CAD9F1;font-size:15px;max-width:44ch}
+  #studentView .head .badge{background:rgba(255,255,255,.15);color:#EAF2FF;border:1px solid rgba(255,255,255,.22)}
+  #studentView .head .teachers .tc{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+    backdrop-filter:blur(6px);box-shadow:none}
+  #studentView .head .tc b{color:#fff} #studentView .head .tc small{color:rgba(255,255,255,.72)}
+  #studentView .head .prow{margin-top:24px}
+  #studentView .head .pcard{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17);
+    backdrop-filter:blur(8px);box-shadow:0 16px 42px -22px rgba(0,0,0,.45)}
+  #studentView .head .pcard .k{color:rgba(255,255,255,.72)}
+  #studentView .head .pcard .v{color:#fff}
+  #studentView .head .pcard .v small{color:rgba(255,255,255,.6)}
 
-  /* ── 섹션 리듬: 풀블리드 밴드 교차 ── */
-  #studentView section{margin-top:0;padding:46px 0}
-  #studentView section:nth-of-type(even){
+  /* ── 섹션 리듬: 파스텔 밴드 교차 ── */
+  #studentView section{margin-top:0;padding:54px 0}
+  #studentView section:nth-of-type(2n){
     margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
     padding-left:calc(50vw - 50%);padding-right:calc(50vw - 50%);
-    background:linear-gradient(180deg, rgba(217,184,106,.04), rgba(217,184,106,.012));
-    border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
-  /* 섹션 헤더 골드 액센트 */
+    background:linear-gradient(180deg,#F0FAEA 0%,#FBFEF8 100%);
+    border-top:1px solid #E8F2E1;border-bottom:1px solid #E8F2E1}
+  #studentView section:nth-of-type(4n){
+    background:linear-gradient(180deg,#EEF5FF 0%,#FAFCFF 100%)!important;
+    border-top-color:#E1EBFA!important;border-bottom-color:#E1EBFA!important}
   .shead .sec-h{display:inline-flex;align-items:center;gap:11px}
   .shead .sec-h::before{content:"";width:20px;height:3px;border-radius:3px;
-    background:linear-gradient(90deg,var(--green),transparent)}
+    background:linear-gradient(90deg,var(--green),#7ED957)}
 
-  /* ── 그라데이션 골드 버튼 + 컬러 글로우 ── */
-  .submit,.twrite,.vod.play{background:linear-gradient(135deg,#EBD08C,#D2AE5E);
-    box-shadow:0 10px 24px -8px rgba(217,184,106,.48)}
-  .submit:hover,.twrite:hover,.vod.play:hover{background:linear-gradient(135deg,#F1D9A0,#D9B86A)}
-  .kbtn{box-shadow:0 10px 26px -8px rgba(254,229,0,.42)}
-  .kbtn:hover{box-shadow:0 12px 30px -8px rgba(254,229,0,.52)}
+  /* ── 그라데이션 버튼 + 컬러 글로우 ── */
+  .submit,.twrite,.vod.play{background:linear-gradient(135deg,#22C55E,#15A048);color:#fff;
+    box-shadow:0 10px 22px -8px rgba(22,163,74,.42)}
+  .submit:hover,.twrite:hover,.vod.play:hover{background:linear-gradient(135deg,#2AD269,#16A34A)}
+  .kbtn{box-shadow:0 10px 24px -8px rgba(254,229,0,.45)}
+  .kbtn:hover{box-shadow:0 12px 28px -8px rgba(254,229,0,.55)}
 
-  /* ── 관리자 히어로 밴드 ── */
+  /* ── 관리자 히어로 밴드 (네이비) + 오버랩 KPI ── */
   #adminView .ahead{
-    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
-    padding:50px calc(50vw - 50%) 34px;margin-top:0;
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);margin-top:0;
+    padding:52px calc(50vw - 50%) 46px;
     background:
-      radial-gradient(70% 120% at 90% -12%, rgba(217,184,106,.15), transparent 55%),
-      linear-gradient(165deg,#1E2923 0%,#141E18 60%,#0E1712 100%);
-    border-bottom:1px solid rgba(217,184,106,.16);}
-  #adminView .kpi{background:rgba(255,255,255,.045);border-color:rgba(236,229,210,.12);
-    backdrop-filter:blur(8px);box-shadow:0 12px 34px -20px rgba(0,0,0,.6)}
-  #adminView .kpis{margin-top:22px}
-  /* 모바일 히어로 보정 */
-  #studentView .head h1{word-break:keep-all;overflow-wrap:break-word}
+      radial-gradient(66% 120% at 88% -12%, rgba(59,130,246,.4), transparent 55%),
+      linear-gradient(158deg,#0B1526 0%,#122A4C 56%,#1E3A8A 122%);
+    color:#fff}
+  #adminView .ahead h1{color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.28)}
+  #adminView .ahead .sub{color:#CAD9F1}
+  #adminView .ahead .tag{background:rgba(255,255,255,.16);color:#fff}
+  #adminView .kpis{margin-top:24px}
+  #adminView .kpi{box-shadow:0 16px 42px -22px rgba(21,33,54,.26)}
+
+  /* 모바일 보정 */
   @media(max-width:560px){
-    #studentView .head{padding-top:42px;padding-bottom:32px}
-    #studentView .head h1{font-size:25px;line-height:1.28}
+    #studentView .head{padding-top:44px;padding-bottom:34px}
+    #studentView .head h1{font-size:26px;line-height:1.28}
     #studentView .head .sub{font-size:13.5px}
-    #studentView section{padding:36px 0}
-    #adminView .ahead{padding-top:38px}
+    #studentView section{padding:38px 0}
+    #adminView .ahead{padding-top:40px}
+    #adminView .kpis{margin-top:16px}
   }
 </style>
 
@@ -970,7 +928,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v19-homepage-0820";
+  var BUILD_VERSION = "v20-busangu-light-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
