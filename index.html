@@ -253,6 +253,16 @@
   .rmtbl.mdrm input{display:none} .rmtbl.mdrm td{padding:9px 10px;font-size:13px;color:var(--ink2)}
   #mdMemo{width:100%;min-height:90px;font-family:inherit;font-size:14px;line-height:1.6;border:1px solid #EAD9A8;border-radius:12px;padding:13px 15px;background:#fff;resize:vertical}
   #mdMemo:focus{outline:none;border-color:var(--amber)}
+  /* 이미지 첨부 */
+  .fileadd{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:13px;font-weight:800;color:var(--green2);background:var(--green-s);border:1px dashed #9BD3AC;border-radius:11px;padding:11px 16px;cursor:pointer}
+  .fileadd span{color:var(--muted);font-weight:600;font-size:11.5px}
+  .fileadd:hover{background:#DCF3E4}
+  .fpreview{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .fpi{position:relative;width:88px;height:88px;border-radius:11px;overflow:hidden;border:1px solid var(--line)}
+  .fpi img{width:100%;height:100%;object-fit:cover;display:block}
+  .fpx{position:absolute;top:4px;right:4px;width:22px;height:22px;border:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:14px;font-weight:800;line-height:1;cursor:pointer}
+  .mdfiles{display:flex;flex-wrap:wrap;gap:10px}
+  .mdfiles img{width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -469,12 +479,12 @@
   }
   function loadMy(){
     if(!window.__me){renderTaskBoard();return;}
-    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(window.__me.id)+'&select=week,status,assets,roadmap,note',{headers:hdr()})
+    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(window.__me.id)+'&select=week,status,assets,roadmap,note,files',{headers:hdr()})
       .then(function(r){return r.json();}).then(function(rows){ mySubs={}; if(Array.isArray(rows))rows.forEach(function(r){mySubs[r.week]=r;}); renderTaskBoard(); }).catch(function(){renderTaskBoard();});
   }
   window.__loadMy=loadMy;
 
-  var tw=$('taskWriteView');
+  var tw=$('taskWriteView'), twKeptUrls=[], twNewFiles=[];
   var assetRows=[['deposit','예금 / 적금'],['stock','주식 / ETF'],['pension','연금 (퇴직·개인)'],['realestate','부동산 (현재 시세)'],['etcAsset','기타 자산']];
   var debtRows=[['mortgage','주택담보대출'],['credit','신용대출 / 카드론'],['etcDebt','기타 부채']];
   var incRows=[['salary','월 세후 급여'],['etcInc','기타 정기 수입']];
@@ -496,11 +506,13 @@
       html+='<div class="fcard"><h3>🗺 통합 로드맵</h3><p class="fsub2">시점별 목표를 적어보세요. 정확하지 않아도 OK.</p><div class="rmwrap"><table class="rmtbl"><thead><tr><th>시점</th><th>자산 목표</th><th>내 집 마련</th><th>은퇴 / 기타</th></tr></thead><tbody>'+
         rmPeriods.map(function(p,i){return '<tr><td class="rp">'+p+'</td><td><input data-rm="'+i+'-a"></td><td><input data-rm="'+i+'-h"></td><td><input data-rm="'+i+'-e"></td></tr>';}).join('')+'</tbody></table></div></div>';
     }
-    html+='<div class="fcard"><h3>💬 인증 글</h3><p class="fsub2">이번 주 배운 점·느낀 점·고민을 자유롭게 적어주세요.</p><textarea id="twNote" placeholder="예) 처음 자산을 정리해보니 생각보다 부채가 많아서 놀랐어요..."></textarea></div>';
+    html+='<div class="fcard"><h3>💬 인증 글 + 캡처</h3><p class="fsub2">이번 주 배운 점·느낀 점·고민을 자유롭게 적어주세요. 캡처·사진 첨부도 돼요.</p><textarea id="twNote" placeholder="예) 처음 자산을 정리해보니 생각보다 부채가 많아서 놀랐어요..."></textarea><label class="fileadd">📎 이미지 첨부 <span>(최대 5장)</span><input type="file" id="twFiles" accept="image/*" multiple hidden></label><div id="twPreview" class="fpreview"></div></div>';
     $('twForm').innerHTML=html;
     if(s.assets){ Object.keys(s.assets).forEach(function(k){var el=$('twForm').querySelector('[data-k="'+k+'"]');if(el)el.value=s.assets[k];}); }
     if(s.roadmap){ Object.keys(s.roadmap).forEach(function(k){var el=$('twForm').querySelector('[data-rm="'+k+'"]');if(el)el.value=s.roadmap[k];}); }
     if(s.note){var tn=$('twNote');if(tn)tn.value=s.note;}
+    twKeptUrls=(s.files||[]).slice(); twNewFiles=[]; renderPreview();
+    var fi=$('twFiles'); if(fi)fi.addEventListener('change',function(e){ Array.prototype.forEach.call(e.target.files,function(f){ if(twKeptUrls.length+twNewFiles.length<5)twNewFiles.push(f); }); e.target.value=''; renderPreview(); });
     if(meta.asset){ $('twForm').querySelectorAll('[data-k]').forEach(function(el){el.addEventListener('input',calcAsset);}); calcAsset(); }
     document.querySelector('nav').classList.remove('hide');
     $('studentView').classList.add('hide'); $('adminView').classList.add('hide'); tw.classList.remove('hide'); window.scrollTo(0,0);
@@ -519,17 +531,41 @@
     return {assets:assets, roadmap:roadmap, note:(tn?tn.value:'')};
   }
   function backToBoard(){ tw.classList.add('hide'); $('studentView').classList.remove('hide'); renderTaskBoard(); var el=$('task');if(el)el.scrollIntoView({block:'start'}); }
+  function renderPreview(){
+    var p=$('twPreview'); if(!p)return;
+    var html=twKeptUrls.map(function(u,i){return '<div class="fpi"><img src="'+u+'"><button type="button" class="fpx" data-t="k" data-i="'+i+'">×</button></div>';}).join('');
+    html+=twNewFiles.map(function(f,i){return '<div class="fpi"><img src="'+URL.createObjectURL(f)+'"><button type="button" class="fpx" data-t="n" data-i="'+i+'">×</button></div>';}).join('');
+    p.innerHTML=html;
+    p.querySelectorAll('.fpx').forEach(function(b){ b.addEventListener('click',function(){ if(b.dataset.t==='k')twKeptUrls.splice(+b.dataset.i,1); else twNewFiles.splice(+b.dataset.i,1); renderPreview(); }); });
+  }
+  function uploadFiles(files, cb){
+    if(!files.length){cb([]);return;}
+    var urls=[], done=0;
+    files.forEach(function(f,i){
+      var ext=((f.name||'img').split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'')||'png';
+      var path=String(window.__me.id).replace(/[^0-9a-zA-Z]/g,'')+'/'+curW+'/'+Date.now()+'_'+i+'.'+ext;
+      fetch(window.SUPA_URL+'/storage/v1/object/subfiles/'+path,{method:'POST',
+        headers:{apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':(f.type||'image/png')}, body:f})
+        .then(function(r){ if(r.ok)urls.push(window.SUPA_URL+'/storage/v1/object/public/subfiles/'+path); done++; if(done===files.length)cb(urls); })
+        .catch(function(){ done++; if(done===files.length)cb(urls); });
+    });
+  }
   function saveSub(status){
     if(!window.__me){toast('로그인이 필요해요');return;}
     var d=collect();
-    fetch(window.SUPA_URL+'/rest/v1/submissions?on_conflict=kakao_id,week',{method:'POST',
-      headers:{apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json', Prefer:'resolution=merge-duplicates'},
-      body:JSON.stringify({kakao_id:window.__me.id, nickname:window.__me.nick, week:curW, assets:d.assets, roadmap:d.roadmap, note:d.note, status:status, updated_at:new Date().toISOString()})
-    }).then(function(r){
-      if(r.ok){ mySubs[curW]={week:curW,status:status,assets:d.assets,roadmap:d.roadmap,note:d.note};
-        toast(status==='제출'?'제출 완료! 🎉':'임시 저장했어요'); if(status==='제출')backToBoard(); }
-      else { toast('저장 실패 — 다시 시도해주세요'); }
-    }).catch(function(){toast('연결 오류');});
+    if(twNewFiles.length)toast('이미지 업로드 중...');
+    uploadFiles(twNewFiles, function(newUrls){
+      var files=twKeptUrls.concat(newUrls);
+      fetch(window.SUPA_URL+'/rest/v1/submissions?on_conflict=kakao_id,week',{method:'POST',
+        headers:{apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json', Prefer:'resolution=merge-duplicates'},
+        body:JSON.stringify({kakao_id:window.__me.id, nickname:window.__me.nick, week:curW, assets:d.assets, roadmap:d.roadmap, note:d.note, files:files, status:status, updated_at:new Date().toISOString()})
+      }).then(function(r){
+        if(r.ok){ mySubs[curW]={week:curW,status:status,assets:d.assets,roadmap:d.roadmap,note:d.note,files:files};
+          twKeptUrls=files; twNewFiles=[];
+          toast(status==='제출'?'제출 완료! 🎉':'임시 저장했어요'); if(status==='제출')backToBoard(); }
+        else { toast('저장 실패 — 다시 시도해주세요'); }
+      }).catch(function(){toast('연결 오류');});
+    });
   }
   $('twSave').addEventListener('click',function(){saveSub('임시저장');});
   $('twSubmit').addEventListener('click',function(){saveSub('제출');});
@@ -604,7 +640,7 @@
       '<button id="mdKick" class="kickbtn">'+(m.removed?'강퇴 취소':'강퇴하기')+'</button></div>';
     $('mdSubs').innerHTML='<div class="fcard"><div class="mdempty">불러오는 중...</div></div>';
     var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY};
-    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(kid)+'&select=week,status,assets,roadmap,note,updated_at&order=week',{headers:H})
+    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(kid)+'&select=week,status,assets,roadmap,note,files,updated_at&order=week',{headers:H})
       .then(function(r){return r.json();}).then(function(rows){ renderSubs(Array.isArray(rows)?rows:[]); }).catch(function(){renderSubs([]);});
     fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(kid)+'&select=memo',{headers:H})
       .then(function(r){return r.json();}).then(function(rows){ if(rows&&rows[0])$('mdMemo').value=rows[0].memo||''; }).catch(function(){});
@@ -629,6 +665,7 @@
       }
       if(s.roadmap&&Object.keys(s.roadmap).length){ body+=renderRoadmap(s.roadmap); }
       if(s.note){ body+='<div class="mdlbl">💬 인증 글</div><div class="mdnote">'+esc(s.note)+'</div>'; }
+      if(s.files&&s.files.length){ body+='<div class="mdlbl">📎 첨부 이미지 ('+s.files.length+')</div><div class="mdfiles">'+s.files.map(function(u){return '<a href="'+esc(u)+'" target="_blank"><img src="'+esc(u)+'"></a>';}).join('')+'</div>'; }
       if(!body)body='<div class="mdempty">내용이 비어 있어요</div>';
       return '<div class="fcard mdsub">'+head+body+'</div>';
     }).join('');
@@ -673,7 +710,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v14-detail-0819";
+  var BUILD_VERSION = "v15-files-0819";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
