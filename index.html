@@ -184,6 +184,51 @@
     background:var(--ink);color:#fff;font-size:13.5px;font-weight:700;padding:13px 22px;border-radius:12px;
     box-shadow:0 16px 40px -12px rgba(0,0,0,.4);transition:.25s;z-index:99;max-width:88vw;text-align:center}
   .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  /* 과제 게시판 카드 */
+  .tcardw{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);margin-bottom:10px}
+  .tcardw .tcl{flex:1;min-width:0}
+  .tcardw .twk{font-size:11px;font-weight:800;color:var(--muted);display:flex;align-items:center;gap:7px}
+  .tcardw .ttt{font-size:16px;font-weight:800;margin:3px 0 2px}
+  .tcardw .tdue{font-size:12px;color:var(--muted);font-weight:600}
+  .tbadge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px}
+  .tbadge.no{background:var(--red-s);color:var(--red)} .tbadge.tmp{background:var(--amber-s);color:#B4780A} .tbadge.done{background:var(--green-s);color:var(--green2)}
+  .twrite{flex:none;font-size:13.5px;font-weight:800;background:var(--green);color:#fff;border:0;border-radius:11px;padding:11px 20px}
+  .twrite:hover{background:var(--green2)}
+  /* 과제 작성 폼 */
+  #taskWriteView{padding-top:22px}
+  .twback{background:none;border:0;color:var(--ink2);font-size:13.5px;font-weight:700;padding:6px 0;margin-bottom:6px}
+  .twback:hover{color:var(--green)}
+  .twh{padding:6px 0 18px}
+  .twh .twlab{font-size:12px;font-weight:800;color:var(--green)}
+  .twh h2{font-size:24px;font-weight:850;margin:5px 0 6px;letter-spacing:-.02em}
+  .twh .twdue{display:inline-block;font-size:12px;font-weight:700;color:#B4780A;background:var(--amber-s);border-radius:8px;padding:5px 11px}
+  .fcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);margin-bottom:14px}
+  .fcard h3{font-size:16px;font-weight:800}
+  .fsub2{font-size:12.5px;color:var(--muted);font-weight:600;margin:3px 0 14px}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px}
+  @media(max-width:560px){.fgrid{grid-template-columns:1fr}}
+  .gh{display:block;font-size:13px;font-weight:800;margin-bottom:7px;color:var(--ink)}
+  .mrow{display:flex;align-items:center;gap:9px;padding:5px 0}
+  .mrow span{flex:1;font-size:13px;font-weight:600;color:var(--ink2)}
+  .mrow input{width:118px;font-family:inherit;font-size:14px;font-weight:700;text-align:right;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--bg)}
+  .mrow input:focus{outline:none;border-color:var(--green);background:#fff}
+  .mrow em{font-size:12px;color:var(--muted);font-weight:700;font-style:normal;width:26px}
+  .mrow.tot{border-top:1px dashed var(--line);margin-top:4px;padding-top:10px}
+  .mrow.tot span{font-weight:800;color:var(--ink)} .mrow.tot b{width:118px;text-align:right;font-size:15px;font-weight:850;color:var(--green)}
+  .netbox{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:13px;padding:15px 18px;margin-top:14px}
+  .netbox span{flex:1;font-size:14px;font-weight:800} .netbox b{font-size:20px;font-weight:850;color:#7CE0A0} .netbox em{font-style:normal;font-size:12px;color:#9FB0C4;font-weight:700}
+  .rmwrap{overflow-x:auto} .rmtbl{width:100%;border-collapse:collapse;min-width:520px}
+  .rmtbl th{background:var(--bg);font-size:11.5px;font-weight:800;color:var(--ink2);padding:9px 10px;text-align:left;border:1px solid var(--line)}
+  .rmtbl td{border:1px solid var(--line);padding:4px}
+  .rmtbl .rp{font-size:12.5px;font-weight:800;color:var(--green2);white-space:nowrap;padding:9px 10px}
+  .rmtbl input{width:100%;border:0;font-family:inherit;font-size:13px;padding:8px;background:transparent}
+  .rmtbl input:focus{outline:none;background:var(--green-s);border-radius:6px}
+  #twForm textarea{width:100%;min-height:130px;font-family:inherit;font-size:14px;line-height:1.7;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--bg);resize:vertical}
+  #twForm textarea:focus{outline:none;border-color:var(--green);background:#fff}
+  .twbtns{display:flex;gap:10px;justify-content:flex-end;margin:6px 0 40px}
+  .btn-ghost{font-size:14.5px;font-weight:800;background:var(--card);color:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:14px 24px}
+  .btn-ghost:hover{border-color:#C9D2DC}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -245,15 +290,14 @@
 
     <section id="task">
       <div class="shead">
-        <div><div class="sec-lbl">Assignment</div><div class="sec-h">과제 게시판</div><div class="sec-s">체크하고 인증하면 완주 페이백!</div></div>
+        <div><div class="sec-lbl">Assignment</div><div class="sec-h">과제 게시판</div><div class="sec-s">주차별 과제를 작성·제출하세요. 임시저장도 돼요.</div></div>
       </div>
       <div class="tprog">
-        <div class="t"><span>내 진도율</span><b id="pctText">0%</b></div>
+        <div class="t"><span>제출 완료</span><b><span id="subDone">0</span> / 5</b></div>
         <div class="bar"><i id="bar"></i></div>
-        <div class="msg" id="pmsg">아직 시작 전이에요. OT 과제부터 체크해봐요</div>
+        <div class="msg" id="pmsg">아직 제출한 과제가 없어요. 이번 주 과제부터 작성해봐요</div>
       </div>
-      <div id="taskRows"></div>
-      <button class="submit" id="submitBtn">✓ 이번 주 과제 인증하기</button>
+      <div id="taskBoard"></div>
     </section>
 
     <section>
@@ -317,6 +361,18 @@
   </div>
 </div>
 
+<!-- ===== 과제 작성 뷰 ===== -->
+<div id="taskWriteView" class="hide">
+  <div class="wrap">
+    <button id="twBack" class="twback">← 과제 목록으로</button>
+    <div id="twForm"></div>
+    <div class="twbtns">
+      <button id="twSave" class="btn-ghost">임시 저장</button>
+      <button id="twSubmit" class="submit" style="width:auto;padding:14px 28px">제출하기</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -349,45 +405,98 @@
     lecs.appendChild(d);
   });
 
-  var tasks=[
-    {wk:'OT',em:'🎬',items:['내가 돈 공부를 하는 "나만의 이유" 3줄 적기','4주 목표 선언하기']},
-    {wk:'1주차',em:'🪙',items:['자산 현황표 작성 (자산·부채·소득·지출)','내 순자산 계산하기','통합 로드맵 초안 (현재→은퇴)']},
-    {wk:'2주차',em:'🛡️',items:['내 연금 3층 현황 점검','ISA·연금저축·IRP 확인','노후 구멍(부족분) 계산해보기']},
-    {wk:'3주차',em:'🏠',items:['내 집 마련 목적·기준 정하기','필요 자금 대략 계산 (내 돈+대출)','청약통장 확인하기']},
-    {wk:'4주차',em:'🧭',items:['관심 지역 손품 (호갱노노·아실)','임장 1곳 다녀오기','내 집 후보 3곳 정리하기']}
+  /* ===== 과제 게시판 / 제출 (Supabase) ===== */
+  function hdr(){return {apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY};}
+  var wkMeta=[
+    {n:0,label:'OT',title:'오리엔테이션 · 나만의 이유',due:'8/30',asset:false},
+    {n:1,label:'WEEK 1',title:'내 자산 그릇 점검하기',due:'9/6',asset:true},
+    {n:2,label:'WEEK 2',title:'평생 흔들리지 않는 자산구조',due:'9/13',asset:false},
+    {n:3,label:'WEEK 3',title:'내 집 마련 기초',due:'9/20',asset:false},
+    {n:4,label:'WEEK 4',title:'나만의 똘똘한 1채 찾기',due:'9/27',asset:false}
   ];
-  var taskRows=$('taskRows');
-  tasks.forEach(function(g,gi){
-    var b=document.createElement('div');b.className='tgrp';
-    var items=g.items.map(function(t){return '<label class="tsk"><input type="checkbox" data-g="'+gi+'"><span>'+t+'</span></label>';}).join('');
-    b.innerHTML='<div class="tgh">'+g.em+' '+g.wk+' <span class="cnt" data-cnt="'+gi+'">0 / '+g.items.length+'</span></div>'+items;
-    taskRows.appendChild(b);
-  });
-  var boxes=taskRows.querySelectorAll('input[type=checkbox]');
-  var bar=$('bar'),pctText=$('pctText'),pmsg=$('pmsg');
-  function update(){
-    var done=0;boxes.forEach(function(b){if(b.checked)done++;});
-    var pct=Math.round(done/boxes.length*100);
-    bar.style.width=pct+'%';pctText.textContent=pct+'%';
-    var hp=$('heroPct');if(hp)hp.textContent=pct+'%';
-    tasks.forEach(function(g,gi){
-      var c=0;taskRows.querySelectorAll('input[data-g="'+gi+'"]').forEach(function(b){if(b.checked)c++;});
-      var el=taskRows.querySelector('[data-cnt="'+gi+'"]');
-      if(el){el.textContent=c+' / '+g.items.length;el.style.color=(c===g.items.length)?'var(--green)':'';}
-    });
-    var m;
-    if(pct===0)m='아직 시작 전이에요. OT 과제부터 체크해봐요';
-    else if(pct<50)m='좋아요, 시작이 반이에요. 계속 가봐요';
-    else if(pct<80)m='절반 넘었어요. 완주가 눈앞이에요';
-    else if(pct<100)m='거의 다 왔어요. 조금만 더!';
-    else m='완주 축하해요! 페이백 대상이에요 🎉';
-    pmsg.textContent=m;
+  var mySubs={}, board=$('taskBoard'), curW=0;
+  function renderTaskBoard(){
+    board.innerHTML=wkMeta.map(function(w){
+      var s=mySubs[w.n];
+      var badge=s?(s.status==='제출'?'<span class="tbadge done">제출 완료</span>':'<span class="tbadge tmp">임시저장</span>'):'<span class="tbadge no">미작성</span>';
+      return '<div class="tcardw"><div class="tcl"><div class="twk">'+w.label+' '+badge+'</div><div class="ttt">'+w.title+'</div><div class="tdue">마감 '+w.due+'(일)</div></div>'+
+        '<button class="twrite" data-w="'+w.n+'">'+(s?'수정하기':'작성하기')+'</button></div>';
+    }).join('');
+    var done=0; wkMeta.forEach(function(w){ if(mySubs[w.n]&&mySubs[w.n].status==='제출')done++; });
+    var pct=Math.round(done/5*100);
+    $('subDone').textContent=done; var bar=$('bar'); if(bar)bar.style.width=pct+'%';
+    var hp=$('heroPct'); if(hp)hp.textContent=pct+'%';
+    var pm=$('pmsg'); if(pm)pm.textContent=done===0?'아직 제출한 과제가 없어요. 이번 주 과제부터 작성해봐요':(done>=5?'모든 과제 제출 완료! 완주 축하해요 🎉':(done+'개 제출했어요. 계속 가봐요!'));
+    board.querySelectorAll('.twrite').forEach(function(b){ b.addEventListener('click',function(){ openWrite(+b.dataset.w); }); });
   }
-  boxes.forEach(function(b){b.addEventListener('change',update);});update();
-  $('submitBtn').addEventListener('click',function(){
-    var done=0;boxes.forEach(function(b){if(b.checked)done++;});
-    toast(done===0?'아직 체크한 과제가 없어요':'과제 '+done+'개 인증 완료! 단톡방에도 공유해봐요');
-  });
+  function loadMy(){
+    if(!window.__me){renderTaskBoard();return;}
+    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(window.__me.id)+'&select=week,status,assets,roadmap,note',{headers:hdr()})
+      .then(function(r){return r.json();}).then(function(rows){ mySubs={}; if(Array.isArray(rows))rows.forEach(function(r){mySubs[r.week]=r;}); renderTaskBoard(); }).catch(function(){renderTaskBoard();});
+  }
+  window.__loadMy=loadMy;
+
+  var tw=$('taskWriteView');
+  var assetRows=[['deposit','예금 / 적금'],['stock','주식 / ETF'],['pension','연금 (퇴직·개인)'],['realestate','부동산 (현재 시세)'],['etcAsset','기타 자산']];
+  var debtRows=[['mortgage','주택담보대출'],['credit','신용대출 / 카드론'],['etcDebt','기타 부채']];
+  var incRows=[['salary','월 세후 급여'],['etcInc','기타 정기 수입']];
+  var expRows=[['fixedExp','고정 지출'],['varExp','변동 지출'],['saving','저축 / 투자']];
+  var rmPeriods=['지금','1년 후','3년 후','5년 후','10년 후','은퇴'];
+  function mrow(k,label){return '<div class="mrow"><span>'+label+'</span><input type="number" data-k="'+k+'" placeholder="0"><em>만원</em></div>';}
+  function grp(title,rows){return '<div class="fg"><b class="gh">'+title+'</b>'+rows.map(function(r){return mrow(r[0],r[1]);}).join('');}
+  function openWrite(w){
+    curW=w; var meta=wkMeta[w]; var s=mySubs[w]||{};
+    var html='<div class="twh"><div class="twlab">'+meta.label+'</div><h2>'+meta.title+'</h2><div class="twdue">⏰ 마감 '+meta.due+'(일) 23:59 · 미제출 시 강퇴</div></div>';
+    if(meta.asset){
+      html+='<div class="fcard"><h3>📋 자산 현황표</h3><p class="fsub2">본인 숫자로 채워주세요. 합계는 자동 계산돼요.</p>'+
+        '<div class="fgrid">'+
+        grp('💰 자산',assetRows)+'<div class="mrow tot"><span>자산 합계</span><b id="tAsset">0</b><em>만원</em></div></div>'+
+        grp('🏦 부채',debtRows)+'<div class="mrow tot"><span>부채 합계</span><b id="tDebt">0</b><em>만원</em></div></div>'+
+        grp('📥 월 소득',incRows)+'</div>'+
+        grp('📤 월 지출',expRows)+'</div>'+
+        '</div><div class="netbox"><span>🌱 순자산 (자산 − 부채)</span><b id="tNet">0</b><em>만원</em></div></div>';
+      html+='<div class="fcard"><h3>🗺 통합 로드맵</h3><p class="fsub2">시점별 목표를 적어보세요. 정확하지 않아도 OK.</p><div class="rmwrap"><table class="rmtbl"><thead><tr><th>시점</th><th>자산 목표</th><th>내 집 마련</th><th>은퇴 / 기타</th></tr></thead><tbody>'+
+        rmPeriods.map(function(p,i){return '<tr><td class="rp">'+p+'</td><td><input data-rm="'+i+'-a"></td><td><input data-rm="'+i+'-h"></td><td><input data-rm="'+i+'-e"></td></tr>';}).join('')+'</tbody></table></div></div>';
+    }
+    html+='<div class="fcard"><h3>💬 인증 글</h3><p class="fsub2">이번 주 배운 점·느낀 점·고민을 자유롭게 적어주세요.</p><textarea id="twNote" placeholder="예) 처음 자산을 정리해보니 생각보다 부채가 많아서 놀랐어요..."></textarea></div>';
+    $('twForm').innerHTML=html;
+    if(s.assets){ Object.keys(s.assets).forEach(function(k){var el=$('twForm').querySelector('[data-k="'+k+'"]');if(el)el.value=s.assets[k];}); }
+    if(s.roadmap){ Object.keys(s.roadmap).forEach(function(k){var el=$('twForm').querySelector('[data-rm="'+k+'"]');if(el)el.value=s.roadmap[k];}); }
+    if(s.note){var tn=$('twNote');if(tn)tn.value=s.note;}
+    if(meta.asset){ $('twForm').querySelectorAll('[data-k]').forEach(function(el){el.addEventListener('input',calcAsset);}); calcAsset(); }
+    document.querySelector('nav').classList.remove('hide');
+    $('studentView').classList.add('hide'); $('adminView').classList.add('hide'); tw.classList.remove('hide'); window.scrollTo(0,0);
+  }
+  function calcAsset(){
+    function sum(keys){var t=0;keys.forEach(function(k){var el=$('twForm').querySelector('[data-k="'+k+'"]');if(el)t+=(+el.value||0);});return t;}
+    var a=sum(['deposit','stock','pension','realestate','etcAsset']), d=sum(['mortgage','credit','etcDebt']);
+    var ta=$('tAsset'),td=$('tDebt'),tn=$('tNet');
+    if(ta)ta.textContent=a.toLocaleString(); if(td)td.textContent=d.toLocaleString(); if(tn)tn.textContent=(a-d).toLocaleString();
+  }
+  function collect(){
+    var f=$('twForm'), assets={}, roadmap={};
+    f.querySelectorAll('[data-k]').forEach(function(el){ if(el.value!=='')assets[el.dataset.k]=+el.value; });
+    f.querySelectorAll('[data-rm]').forEach(function(el){ if(el.value.trim()!=='')roadmap[el.dataset.rm]=el.value.trim(); });
+    var tn=$('twNote');
+    return {assets:assets, roadmap:roadmap, note:(tn?tn.value:'')};
+  }
+  function backToBoard(){ tw.classList.add('hide'); $('studentView').classList.remove('hide'); renderTaskBoard(); var el=$('task');if(el)el.scrollIntoView({block:'start'}); }
+  function saveSub(status){
+    if(!window.__me){toast('로그인이 필요해요');return;}
+    var d=collect();
+    fetch(window.SUPA_URL+'/rest/v1/submissions',{method:'POST',
+      headers:{apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json', Prefer:'resolution=merge-duplicates'},
+      body:JSON.stringify({kakao_id:window.__me.id, nickname:window.__me.nick, week:curW, assets:d.assets, roadmap:d.roadmap, note:d.note, status:status, updated_at:new Date().toISOString()})
+    }).then(function(r){
+      if(r.ok){ mySubs[curW]={week:curW,status:status,assets:d.assets,roadmap:d.roadmap,note:d.note};
+        toast(status==='제출'?'제출 완료! 🎉':'임시 저장했어요'); if(status==='제출')backToBoard(); }
+      else { toast('저장 실패 — 다시 시도해주세요'); }
+    }).catch(function(){toast('연결 오류');});
+  }
+  $('twSave').addEventListener('click',function(){saveSub('임시저장');});
+  $('twSubmit').addEventListener('click',function(){saveSub('제출');});
+  $('twBack').addEventListener('click',backToBoard);
+  renderTaskBoard();
 
   /* ===== 관리자 명단 (Supabase) ===== */
   var members=[];
@@ -420,11 +529,20 @@
   function fmtDate(s){ if(!s)return '—'; try{var d=new Date(s);return (d.getMonth()+1)+'/'+d.getDate();}catch(e){return '—';} }
   function loadMembers(){
     if(!window.SUPA_URL) return;
-    fetch(window.SUPA_URL+'/rest/v1/members?select=nickname,kakao_id,joined_at&order=joined_at.desc',{
-      headers:{apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY}
-    }).then(function(r){return r.json();}).then(function(rows){
+    var H={apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY};
+    Promise.all([
+      fetch(window.SUPA_URL+'/rest/v1/members?select=nickname,kakao_id,joined_at&order=joined_at.desc',{headers:H}).then(function(r){return r.json();}),
+      fetch(window.SUPA_URL+'/rest/v1/submissions?select=kakao_id,week,status',{headers:H}).then(function(r){return r.json();})
+    ]).then(function(res){
+      var rows=res[0], subs=res[1];
       if(!Array.isArray(rows))return;
-      members=rows.map(function(r){return {nm:r.nickname||'(이름없음)', w:[0,0,0,0,0], st:'ok', act:fmtDate(r.joined_at)};});
+      var byId={}; if(Array.isArray(subs))subs.forEach(function(s){ if(s.status==='제출'){ (byId[s.kakao_id]=byId[s.kakao_id]||{})[s.week]=1; } });
+      members=rows.map(function(r){
+        var sub=byId[r.kakao_id]||{};
+        var w=[sub[0]?1:0,sub[1]?1:0,sub[2]?1:0,sub[3]?1:0,sub[4]?1:0];
+        var cnt=w.reduce(function(a,b){return a+b;},0);
+        return {nm:r.nickname||'(이름없음)', kid:r.kakao_id, w:w, st:(cnt===0?'risk':'ok'), act:fmtDate(r.joined_at)};
+      });
       paintMembers();
     }).catch(function(){});
   }
@@ -456,7 +574,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v12-light-0819";
+  var BUILD_VERSION = "v13-tasks-0819";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
@@ -497,7 +615,9 @@
         var nick=(res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)||(res.properties && res.properties.nickname)||'';
         var myId=String(res.id);
         saveMember(myId, nick);
-        if(checkAdmin(nick, myId) && window.__refreshRoster) window.__refreshRoster();
+        window.__me={id:String(myId), nick:nick};
+        if(checkAdmin(nick, myId)){ if(window.__refreshRoster) window.__refreshRoster(); }
+        else { if(window.__loadMy) window.__loadMy(); }
         route(nick, myId);
       })
       .catch(function(e){ showErr('정보를 불러오지 못했어요: ' + (e && (e.msg||e.message) ? (e.msg||e.message) : '다시 시도해 주세요')); });
