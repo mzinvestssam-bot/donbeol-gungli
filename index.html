@@ -7,6 +7,7 @@
 <body>
 <title>티끌모아 잘살궁리 클래스룸</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
   :root{
     --bg:#F4F7FA; --card:#FFFFFF; --line:#E7ECF2; --line2:#EEF2F6;
     --ink:#141C2B; --ink2:#4A5568; --muted:#8A97A8;
@@ -399,6 +400,32 @@
   .stp.s2{border-color:#CFE6C2;background:linear-gradient(180deg,#F5FBEF,#FFFEFB)} .stp.s2 .sn{background:#5DA544} .stp.s2 .schk li::before{color:#5DA544}
   .stp.s3{border-color:#C4D8EE;background:linear-gradient(180deg,#F1F7FC,#FFFEFB)} .stp.s3 .sn{background:#4A78B8} .stp.s3 .schk li::before{color:#4A78B8}
   .stp.s4{border-color:#D9CBEB;background:linear-gradient(180deg,#F7F1FC,#FFFEFB)} .stp.s4 .sn{background:#8B6FB0} .stp.s4 .schk li::before{color:#8B6FB0}
+
+  /* ═══════════ 🖤 히어로 = 칠판 ═══════════ */
+  #studentView .head, #adminView .ahead{
+    background:
+      radial-gradient(120% 80% at 14% 0%, rgba(240,236,224,.05), transparent 46%),
+      radial-gradient(90% 60% at 90% 18%, rgba(240,236,224,.035), transparent 52%),
+      linear-gradient(165deg,#203028 0%,#182219 58%,#131B15 100%);
+    background-color:#182219;
+    box-shadow:inset 0 0 0 1px rgba(240,236,224,.07), inset 0 -60px 80px -60px rgba(0,0,0,.55);
+    border-bottom:1px solid rgba(240,236,224,.12);}
+  #studentView .head h1{font-family:'Nanum Pen Script',var(--sans);font-weight:400;font-size:56px;
+    letter-spacing:0;line-height:1.12;margin-top:8px;color:#F4F0E4;
+    text-shadow:0 1px 0 rgba(0,0,0,.35),0 0 22px rgba(240,236,224,.1)}
+  #studentView .head .badge{font-family:'Nanum Pen Script',var(--sans);font-size:18px;font-weight:400;
+    background:rgba(240,236,224,.08);color:#EDE8DA;border:1.5px dashed rgba(240,236,224,.4)}
+  #studentView .head .pcard{background:rgba(240,236,224,.045);border:1.5px dashed rgba(240,236,224,.26);
+    backdrop-filter:none;box-shadow:none}
+  #studentView .head .pcard .k{color:rgba(240,236,224,.62)}
+  #studentView .head .pcard .v{color:#F4F0E4}
+  #studentView .head .pcard .v small{color:rgba(240,236,224,.5)}
+  #studentView .head .sub{display:none}
+  #studentView .head .teachers{display:none}
+  #adminView .ahead h1{color:#F4F0E4}
+  #adminView .ahead .sub{color:#B7C0B0}
+  #adminView .ahead .tag{background:rgba(240,236,224,.12);color:#EDE8DA;border:1px dashed rgba(240,236,224,.35)}
+  @media(max-width:560px){ #studentView .head h1{font-size:42px} }
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -966,7 +993,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v21-warm-infographic-0820";
+  var BUILD_VERSION = "v22-chalkboard-hero-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
