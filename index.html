@@ -7,7 +7,7 @@
 <body>
 <title>티끌모아 잘살궁리 클래스룸</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
   :root{
     --bg:#F4F7FA; --card:#FFFFFF; --line:#E7ECF2; --line2:#EEF2F6;
     --ink:#141C2B; --ink2:#4A5568; --muted:#8A97A8;
@@ -469,6 +469,22 @@
       padding-left:calc(50vw - 50%);padding-right:calc(50vw - 50%);
       border-width:7px;border-radius:0}
   }
+
+  /* ═══════════ ✨ 고급 명조 타이틀 + 강의 라벨 정리 ═══════════ */
+  #studentView .head h1{
+    font-family:'Gowun Batang','Nanum Myeongjo',serif;font-weight:700;font-size:36px;
+    letter-spacing:.005em;line-height:1.32;color:#F3EEDF;margin-top:14px;
+    padding-bottom:11px;border-bottom:1px solid rgba(233,203,132,.5);
+    text-shadow:0 1px 4px rgba(0,0,0,.4)}
+  #studentView .head h1::before{content:"✦ ";color:#E6C578;font-size:.55em;vertical-align:.18em;font-weight:400}
+  #studentView .head h1::after{content:" ✦";color:#E6C578;font-size:.55em;vertical-align:.18em;font-weight:400}
+  #studentView .head .badge{font-weight:700}
+  @media(max-width:560px){ #studentView .head h1{font-size:27px;line-height:1.34} }
+  /* 강의 카드: 이모지 제거 → 주차 라벨을 세로 강조 마커로 */
+  .lec .idx{width:56px;display:flex;flex-direction:column;justify-content:center}
+  .lec .idx .wk{font-size:12px;font-weight:800;color:var(--ink);letter-spacing:.02em;
+    line-height:1.35;padding-left:2px;border-left:3px solid var(--green);padding:2px 0 2px 9px;text-align:left}
+  .lec.h .idx .wk{border-left-color:var(--blue)}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -706,7 +722,7 @@
     var pts=w.pts.map(function(p){return '<li>'+p+'</li>';}).join('');
     var btn=w.live?'<button class="vod play" data-vod="'+wi+'">▶ 강의 보기</button><div class="vodbox" id="vodbox'+wi+'"></div>'
                   :'<button class="vod lock">🔒 '+w.date+'</button>';
-    d.innerHTML='<div class="idx"><div class="wk">'+w.wk+'</div><div class="cir">'+w.em+'</div></div>'+
+    d.innerHTML='<div class="idx"><div class="wk">'+w.wk+'</div></div>'+
       '<div class="body"><div class="top"><span class="who '+w.cls+'">'+w.who+'</span>'+
       '<span class="stt '+(w.live?'on':'soon')+'">'+(w.live?'공개중':'예정')+'</span></div>'+
       '<h3>'+w.title+'</h3><ul>'+pts+'</ul><div class="foot">'+btn+'</div></div>';
@@ -1036,7 +1052,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v24-board-fullwide-0820";
+  var BUILD_VERSION = "v25-serif-title-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
