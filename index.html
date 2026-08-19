@@ -291,6 +291,57 @@
   .stog{display:inline-flex;gap:3px;background:var(--bg);border:1px solid var(--line);border-radius:100px;padding:3px}
   .stb{font-size:11px;font-weight:800;border:0;border-radius:100px;padding:5px 11px;background:transparent;color:var(--muted);cursor:pointer}
   .stb.on.ok{background:var(--green);color:#fff} .stb.on.late{background:var(--amber);color:#fff} .stb.on.risk{background:#94A3B8;color:#fff}
+
+  /* ═══════════════ 🖤 PREMIUM CHALKBOARD SKIN ═══════════════ */
+  :root{
+    --bg:#131A16; --card:#1C241F; --line:rgba(236,229,210,.13); --line2:rgba(236,229,210,.07);
+    --ink:#F1ECDD; --ink2:#C6CCBE; --muted:#8C9488;
+    --green:#D9B86A; --green2:#EBD08C; --green-s:rgba(217,184,106,.15);   /* 브라스 골드 = 메인 액센트 */
+    --blue:#82B4EE; --blue-s:rgba(130,180,238,.14);
+    --amber:#E3AC4E; --amber-s:rgba(227,172,78,.15);
+    --red:#E9787C; --red-s:rgba(233,120,124,.15);
+    --kakao:#FEE500;
+    --sh:0 10px 30px -14px rgba(0,0,0,.62); --sh2:0 18px 46px -16px rgba(0,0,0,.72);
+  }
+  body{color:var(--ink);
+    background:
+      radial-gradient(120% 55% at 18% 0%, rgba(240,236,224,.035), transparent 46%),
+      radial-gradient(90% 50% at 92% 24%, rgba(240,236,224,.022), transparent 52%),
+      radial-gradient(90% 62% at 50% 104%, rgba(217,184,106,.055), transparent 58%),
+      var(--bg);
+    background-attachment:fixed;}
+  h1,h2,h3{color:var(--ink)}
+  .head h1,.gate h1,.ahead h1{text-shadow:0 1px 2px rgba(0,0,0,.38)}
+  nav{background:rgba(19,25,21,.82);border-bottom-color:var(--line)}
+  .nb .dot{box-shadow:0 0 8px rgba(217,184,106,.6)}
+  /* 카드 질감: 상단 분필빛 하이라이트 + 골드 hover */
+  .pcard,.kpi,.tc,.lec,.stp,.panel,.tprog,.tgrp,.tcardw,.fcard,.mdprofile,.tpcard,.gate{
+    box-shadow:inset 0 1px 0 rgba(240,236,224,.05), var(--sh)}
+  .lec:hover{border-color:rgba(217,184,106,.42)}
+  /* 채워진 골드 버튼/배지 → 글자 어둡게 */
+  .stt.on,.submit,.twrite,.vod.play,.stb.on.ok{color:#1c1608}
+  .bar i{background:linear-gradient(90deg,var(--green2),var(--green))}
+  /* var(--ink)를 '어두운 면'으로 쓰던 요소들 복구 */
+  .ahead .tag{background:var(--green);color:#1c1608}
+  .fbtn.on,.tfbtn.on{background:var(--green);color:#1c1608;border-color:var(--green)}
+  .netbox,.mds.net{background:#0E1512}
+  .toast{background:#0B120E;color:#F1ECDD;border:1px solid var(--line)}
+  /* 흰 배경 하드코딩 → 다크 면으로 */
+  .search:focus,.mrow input:focus,#twForm textarea:focus{background:var(--card)}
+  .kickbtn{background:var(--card)}
+  #mdMemo{background:var(--bg);border-color:var(--line)}
+  .gate .av img{border-color:var(--card)}
+  /* 라이트 글로우 → 골드빛 글로우 */
+  #loginGate{background:radial-gradient(85% 55% at 50% -6%, rgba(217,184,106,.11), transparent 60%),var(--bg)}
+  .pay{background-image:radial-gradient(120% 80% at 50% 0%, rgba(217,184,106,.11), transparent 60%)}
+  /* 파랑·앰버 텍스트 다크 대비 보정 */
+  .who.h{color:var(--blue)}
+  .twh .twdue,.pill.late,.tbadge.tmp{color:var(--amber)}
+  .tpopts button.on{box-shadow:0 0 0 2px rgba(217,184,106,.2)}
+  .mk.n{color:#5A6560}
+  .wbar i.na{background:rgba(236,229,210,.13)}
+  .tsk:has(input:checked){border-color:rgba(217,184,106,.32)}
+  .tsk:has(input:checked) span{text-decoration-color:rgba(217,184,106,.5)}
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
@@ -854,7 +905,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v17-step-vod-0820";
+  var BUILD_VERSION = "v18-chalkboard-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
