@@ -653,24 +653,24 @@
   <div class="wrap">
     <div class="ahead">
       <span class="tag" style="background:var(--green)">TRAINING</span>
-      <h1>트레이닝 현황표</h1>
+      <h1>컨설팅 신청 현황</h1>
       <div class="sub">수강생의 1:1 트레이닝 신청·진행 상태를 한눈에</div>
       <div class="kpis">
         <div class="kpi"><div class="k">전체</div><div class="v" id="trAll">0<small>명</small></div></div>
-        <div class="kpi"><div class="k">진행중</div><div class="v" id="trProg" style="color:var(--green)">0</div></div>
-        <div class="kpi"><div class="k">예정</div><div class="v" id="trPlan" style="color:var(--amber)">0</div></div>
-        <div class="kpi"><div class="k">미정</div><div class="v" id="trNone" style="color:var(--muted)">0</div></div>
+        <div class="kpi"><div class="k">일정확정</div><div class="v" id="trProg" style="color:var(--green)">0</div></div>
+        <div class="kpi"><div class="k">신청완료</div><div class="v" id="trPlan" style="color:var(--amber)">0</div></div>
+        <div class="kpi"><div class="k">미신청</div><div class="v" id="trNone" style="color:var(--muted)">0</div></div>
       </div>
     </div>
     <div class="panel">
       <div class="fbar">
         <button class="tfbtn on" data-tf="all">전체</button>
-        <button class="tfbtn" data-tf="진행중">진행중</button>
-        <button class="tfbtn" data-tf="예정">예정</button>
-        <button class="tfbtn" data-tf="미정">미정</button>
+        <button class="tfbtn" data-tf="일정확정">일정확정</button>
+        <button class="tfbtn" data-tf="신청완료">신청완료</button>
+        <button class="tfbtn" data-tf="미신청">미신청</button>
         <input class="search" id="trSearch" placeholder="이름 검색">
       </div>
-      <div class="tbl"><table><thead><tr><th style="text-align:left">수강생</th><th>선호 시간</th><th>선호 장소</th><th>트레이닝 상태</th></tr></thead><tbody id="trBody"></tbody></table></div>
+      <div class="tbl"><table><thead><tr><th style="text-align:left">수강생</th><th>선호 시간</th><th>선호 장소</th><th>컨설팅 상태</th></tr></thead><tbody id="trBody"></tbody></table></div>
       <p class="fsub" id="trHint" style="text-align:left;margin-top:12px"></p>
     </div>
   </div>
@@ -869,7 +869,7 @@
   /* ===== 관리자 명단 (Supabase) ===== */
   var members=[];
   var stLabel={ok:'정상',late:'늦어짐',risk:'위험'};
-  function mark(v){return v?'<span class="mk y">✓</span>':'<span class="mk n">·</span>';}
+  function mark(v){return v===2?'<span class="mk y" title="피드백완료" style="color:var(--blue)">✓✓</span>':(v?'<span class="mk y">✓</span>':'<span class="mk n">·</span>');}
   [{w:'OT'},{w:'1주차'},{w:'2주차'},{w:'3주차'},{w:'4주차'}].forEach(function(r){
     var d=document.createElement('div');d.className='wrate';
     d.innerHTML='<div class="l"><span>'+r.w+'</span><b>미오픈</b></div><div class="wbar"><i class="na" style="width:100%"></i></div>';
@@ -879,7 +879,7 @@
   function renderM(){
     var list=members.filter(function(m){return (curF==='all'||m.st===curF)&&(!curQ||m.nm.indexOf(curQ)>-1);});
     mBody.innerHTML=list.length?list.map(function(m){
-      var done=m.w.reduce(function(a,b){return a+b;},0),pct=Math.round(done/5*100);
+      var done=m.w.filter(function(x){return x>0;}).length,pct=Math.round(done/5*100);
       return '<tr'+(m.removed?' style="opacity:.45"':'')+'><td class="nm">'+m.nm+'</td>'+m.w.map(function(v){return '<td>'+mark(v)+'</td>';}).join('')+
         '<td><div class="mini"><i style="width:'+pct+'%"></i></div><div style="font-size:10.5px;margin-top:3px;color:var(--muted)">'+pct+'%</div></td>'+
         '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td>'+m.act+'</td>'+
@@ -905,11 +905,11 @@
     ]).then(function(res){
       var rows=res[0], subs=res[1];
       if(!Array.isArray(rows))return;
-      var byId={}; if(Array.isArray(subs))subs.forEach(function(s){ if(s.status==='제출'){ (byId[s.kakao_id]=byId[s.kakao_id]||{})[s.week]=1; } });
+      var byId={}; if(Array.isArray(subs))subs.forEach(function(s){ if(s.status==='제출'||s.status==='피드백완료'){ (byId[s.kakao_id]=byId[s.kakao_id]||{})[s.week]=(s.status==='피드백완료'?2:1); } });
       members=rows.map(function(r){
         var sub=byId[r.kakao_id]||{};
-        var w=[sub[0]?1:0,sub[1]?1:0,sub[2]?1:0,sub[3]?1:0,sub[4]?1:0];
-        var cnt=w.reduce(function(a,b){return a+b;},0);
+        var w=[sub[0]||0,sub[1]||0,sub[2]||0,sub[3]||0,sub[4]||0];
+        var cnt=w.filter(function(x){return x>0;}).length;
         return {nm:r.nickname||'(이름없음)', kid:r.kakao_id, w:w, st:(cnt===0?'risk':'ok'), act:fmtDate(r.joined_at)};
       });
       paintMembers();
@@ -928,26 +928,40 @@
   function openMemberDetail(kid, nm){
     curKid=kid;
     var m=members.filter(function(x){return x.kid===kid;})[0]||{nm:nm,w:[0,0,0,0,0]};
-    var pct=Math.round(m.w.reduce(function(a,b){return a+b;},0)/5*100);
+    var pct=Math.round(m.w.filter(function(x){return x>0;}).length/5*100);
     $('mdHead').innerHTML='<div class="mdprofile"><div class="mdav">'+esc((nm||'?').charAt(0))+'</div>'+
       '<div class="mdpi"><h2>'+esc(nm)+'</h2><div class="mdmeta">가입 '+esc(m.act||'—')+' · 진도 '+pct+'% · <span class="pill '+m.st+'">'+stLabel[m.st]+'</span></div></div>'+
       '<button id="mdKick" class="kickbtn">'+(m.removed?'강퇴 취소':'강퇴하기')+'</button></div>';
     $('mdSubs').innerHTML='<div class="fcard"><div class="mdempty">불러오는 중...</div></div>';
     var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY};
-    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(kid)+'&select=week,status,assets,roadmap,note,files,updated_at&order=week',{headers:H})
-      .then(function(r){return r.json();}).then(function(rows){ renderSubs(Array.isArray(rows)?rows:[]); }).catch(function(){renderSubs([]);});
+    reloadSubs(kid);
     fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(kid)+'&select=memo',{headers:H})
       .then(function(r){return r.json();}).then(function(rows){ if(rows&&rows[0])$('mdMemo').value=rows[0].memo||''; }).catch(function(){});
     document.querySelector('nav').classList.remove('hide');
     $('adminView').classList.add('hide'); $('studentView').classList.add('hide'); $('memberDetailView').classList.remove('hide'); window.scrollTo(0,0);
     $('mdKick').addEventListener('click',function(){ toggleKick(m); });
   }
+  function reloadSubs(kid){
+    var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY};
+    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(kid)+'&select=week,status,assets,roadmap,note,files,updated_at&order=week',{headers:H})
+      .then(function(r){return r.json();}).then(function(rows){ renderSubs(Array.isArray(rows)?rows:[]); }).catch(function(){renderSubs([]);});
+  }
+  function saveFeedback(wk, done){
+    if(!curKid)return;
+    fetch(window.SUPA_URL+'/rest/v1/submissions?kakao_id=eq.'+encodeURIComponent(curKid)+'&week=eq.'+wk,{method:'PATCH',
+      headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({status:done?'피드백완료':'제출'})})
+     .then(function(r){ if(r.ok){ toast(done?'피드백 완료 체크 ✓':'체크 해제했어요'); reloadSubs(curKid); if(window.__refreshRoster)window.__refreshRoster(); } else toast('실패 — 다시 시도'); }).catch(function(){toast('연결 오류');});
+  }
   function renderSubs(rows){
     var byWk={}; rows.forEach(function(r){byWk[r.week]=r;});
     $('mdSubs').innerHTML=wkMeta.map(function(w){
       var s=byWk[w.n];
-      var badge=s?'<span class="tbadge '+(s.status==='제출'?'done':'tmp')+'">'+esc(s.status)+'</span>':'<span class="tbadge no">미작성</span>';
-      var head='<div class="mdsh"><b>'+w.label+' · '+w.title+'</b>'+badge+'</div>';
+      var stt=s?s.status:'';
+      var isSub=(stt==='제출'||stt==='피드백완료');
+      var fb=(stt==='피드백완료');
+      var badge=s?'<span class="tbadge '+(isSub?'done':'tmp')+'">'+esc(stt)+'</span>':'<span class="tbadge no">미작성</span>';
+      var fbBtn=isSub?'<button class="fbToggle" data-wk="'+w.n+'" data-done="'+(fb?'1':'0')+'" style="margin-left:auto;font-size:11.5px;font-weight:800;border-radius:8px;padding:6px 11px;cursor:pointer;border:1px solid '+(fb?'var(--blue)':'var(--line)')+';background:'+(fb?'var(--blue-s)':'var(--card)')+';color:'+(fb?'var(--blue)':'var(--ink2)')+'">'+(fb?'✓ 피드백완료':'피드백 완료 체크')+'</button>':'';
+      var head='<div class="mdsh"><b>'+w.label+' · '+w.title+'</b>'+badge+fbBtn+'</div>';
       if(!s)return '<div class="fcard mdsub">'+head+'<div class="mdempty">아직 작성 전이에요</div></div>';
       var body='';
       if(s.assets&&Object.keys(s.assets).length){
@@ -963,6 +977,9 @@
       if(!body)body='<div class="mdempty">내용이 비어 있어요</div>';
       return '<div class="fcard mdsub">'+head+body+'</div>';
     }).join('');
+    document.querySelectorAll('#mdSubs .fbToggle').forEach(function(b){
+      b.addEventListener('click',function(){ saveFeedback(parseInt(b.dataset.wk,10), b.dataset.done!=='1'); });
+    });
   }
   function renderRoadmap(rm){
     var rows=rmPeriods.map(function(p,i){ var a=rm[i+'-a']||'',h=rm[i+'-h']||'',e=rm[i+'-e']||''; if(!a&&!h&&!e)return ''; return '<tr><td class="rp">'+p+'</td><td>'+esc(a)+'</td><td>'+esc(h)+'</td><td>'+esc(e)+'</td></tr>'; }).join('');
@@ -985,7 +1002,7 @@
 
   /* ===== 트레이닝 현황표 ===== */
   var trainees=[], trF='all', trQ='', myPref={};
-  var stMap={'진행중':'ok','예정':'late','미정':'risk'};
+  var stMap={'일정확정':'ok','신청완료':'late','미신청':'risk'};
   function loadTrain(){
     if(!window.SUPA_URL)return;
     fetch(window.SUPA_URL+'/rest/v1/members?select=kakao_id,nickname,train_pref,train_place,train_status&order=joined_at.desc',{headers:hdr()})
@@ -997,20 +1014,20 @@
   window.__loadTrain=loadTrain;
   function renderTrain(){
     var tb=$('trBody'); if(!tb)return;
-    var list=trainees.filter(function(m){var st=m.train_status||'미정'; return (trF==='all'||st===trF)&&(!trQ||(m.nickname||'').indexOf(trQ)>-1);});
+    var list=trainees.filter(function(m){var st=m.train_status||'미신청'; return (trF==='all'||st===trF)&&(!trQ||(m.nickname||'').indexOf(trQ)>-1);});
     tb.innerHTML=list.length?list.map(function(m){
-      var st=m.train_status||'미정';
+      var st=m.train_status||'미신청';
       var status = window.__isAdmin
-        ? '<div class="stog">'+['미정','예정','진행중'].map(function(o){return '<button class="stb'+(st===o?' on '+stMap[o]:'')+'" data-kid="'+m.kakao_id+'" data-st="'+o+'">'+o+'</button>';}).join('')+'</div>'
+        ? '<div class="stog">'+['미신청','신청완료','일정확정'].map(function(o){return '<button class="stb'+(st===o?' on '+stMap[o]:'')+'" data-kid="'+m.kakao_id+'" data-st="'+o+'">'+o+'</button>';}).join('')+'</div>'
         : '<span class="pill '+stMap[st]+'">'+st+'</span>';
       return '<tr><td class="nm">'+esc(m.nickname||'(이름없음)')+'</td>'+
         '<td>'+(m.train_pref?'<span class="tchip">'+esc(m.train_pref)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
         '<td>'+(m.train_place?'<span class="tchip pl">'+esc(m.train_place)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
         '<td>'+status+'</td></tr>';
     }).join('') : '<tr><td colspan="4" class="empty">아직 트레이닝 신청자가 없어요</td></tr>';
-    var c={'진행중':0,'예정':0,'미정':0}; trainees.forEach(function(m){c[m.train_status||'미정']++;});
-    $('trAll').innerHTML=trainees.length+'<small>명</small>'; $('trProg').textContent=c['진행중']; $('trPlan').textContent=c['예정']; $('trNone').textContent=c['미정'];
-    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미정 → 예정 → 진행중으로 바꿀 수 있어요.' : '＊이미 '+(c['진행중']+c['예정'])+'명이 트레이닝을 신청했어요!';
+    var c={'일정확정':0,'신청완료':0,'미신청':0}; trainees.forEach(function(m){c[m.train_status||'미신청']++;});
+    $('trAll').innerHTML=trainees.length+'<small>명</small>'; $('trProg').textContent=c['일정확정']; $('trPlan').textContent=c['신청완료']; $('trNone').textContent=c['미신청'];
+    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미신청 → 신청완료 → 일정확정으로 바꿀 수 있어요.' : '＊이미 '+(c['일정확정']+c['신청완료'])+'명이 컨설팅을 신청했어요!';
     if(window.__isAdmin){ tb.querySelectorAll('.stb').forEach(function(b){ b.addEventListener('click',function(){ setTrainStatus(b.dataset.kid,b.dataset.st); }); }); }
   }
   function setTrainStatus(kid,st){
@@ -1057,7 +1074,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v26-intro-0820";
+  var BUILD_VERSION = "v27-consult-feedback-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리"];
   var ADMIN_IDS   = [];
