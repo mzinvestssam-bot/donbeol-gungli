@@ -493,6 +493,22 @@
 </style>
 
 <!-- ===== LOGIN GATE ===== -->
+<script>
+(function(){
+  var h=(location.hostname||'').toLowerCase();
+  var allowed = location.protocol==='file:' || h==='' || h==='localhost' || h==='127.0.0.1'
+    || /^donbeol-gungli[a-z0-9-]*\.vercel\.app$/.test(h);
+  if(!allowed){
+    var block=function(){ document.body.innerHTML='<div style="font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#4b5563;background:#FBF5EA;padding:40px;line-height:1.7">'
+      +'<div style="font-size:44px;margin-bottom:14px">🔒</div>'
+      +'<div style="font-size:18px;font-weight:800;color:#2A4534">이 클래스룸은 공식 주소에서만 이용할 수 있어요</div>'
+      +'<div style="font-size:14px;margin-top:10px">티끌모아 잘살궁리 · 너궁리 × 금융쌤</div>'
+      +'<div style="font-size:12.5px;margin-top:22px;color:#9ca3af">© 무단 복제·배포를 금지합니다</div></div>'; };
+    if(document.body) block(); else document.addEventListener('DOMContentLoaded',block);
+    throw new Error('unauthorized host');
+  }
+})();
+</script>
 <div id="loginGate">
   <div class="gate">
     <div class="av">
@@ -1074,7 +1090,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v29-schedule-fix-0820";
+  var BUILD_VERSION = "v30-domain-lock-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리", "박효은", "mz_invest_ssam"];
   var ADMIN_IDS   = [];
