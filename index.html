@@ -726,7 +726,7 @@
   function $(id){return document.getElementById(id);}
 
   var weeks=[
-    {wk:'OT',em:'🎬',who:'너궁리',cls:'g',title:'오리엔테이션 · 마인드셋',date:'8/31(월) 오픈',live:false,
+    {wk:'OT',em:'🎬',who:'너궁리',cls:'g',title:'오리엔테이션 · 마인드셋',date:'8/31(월) 오픈',live:true,link:'https://app.notion.com/p/3cb4e2258c8e80568caedb60a8ae923b',linkLabel:'OT 안내 보기 (노션)',
      pts:['챌린지 시작 · 4주 로드맵 안내','"나만의 이유" 세팅하기','완주 페이백 규칙 안내']},
     {wk:'WEEK 1',em:'🪙',who:'금융쌤',cls:'h',title:'내 자산 그릇 점검하기',date:'9/7(월) 오픈',live:false,
      pts:['포트폴리오 진단 · 현금 상태 파악','자산·부채·소득·지출 정리법','내 순자산 = 지금 나의 출발선']},
@@ -741,14 +741,15 @@
   weeks.forEach(function(w,wi){
     var d=document.createElement('div');d.className='lec '+w.cls;
     var pts=w.pts.map(function(p){return '<li>'+p+'</li>';}).join('');
-    var btn=w.live?'<button class="vod play" data-vod="'+wi+'">▶ 강의 보기</button><div class="vodbox" id="vodbox'+wi+'"></div>'
+    var btn=w.link?'<a class="vod play" href="'+w.link+'" target="_blank" rel="noopener" style="text-decoration:none">📖 '+(w.linkLabel||'안내 보기')+'</a>'
+                  :w.live?'<button class="vod play" data-vod="'+wi+'">▶ 강의 보기</button><div class="vodbox" id="vodbox'+wi+'"></div>'
                   :'<button class="vod lock">🔒 '+w.date+'</button>';
     d.innerHTML='<div class="idx"><div class="wk">'+w.wk+'</div></div>'+
       '<div class="body"><div class="top"><span class="who '+w.cls+'">'+w.who+'</span>'+
       '<span class="stt '+(w.live?'on':'soon')+'">'+(w.live?'공개중':'예정')+'</span></div>'+
       '<h3>'+w.title+'</h3><ul>'+pts+'</ul><div class="foot">'+btn+'</div></div>';
     lecs.appendChild(d);
-    var pb=d.querySelector('.vod.play'); if(pb)pb.addEventListener('click',function(){playVod(wi);});
+    var pb=d.querySelector('button.vod.play'); if(pb)pb.addEventListener('click',function(){playVod(wi);});
   });
   function embedHtml(url){
     var yt=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/);
@@ -1090,7 +1091,7 @@
 <script>
 (function(){
   "use strict";
-  var BUILD_VERSION = "v30-domain-lock-0820";
+  var BUILD_VERSION = "v31-ot-notion-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
   var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리", "박효은", "mz_invest_ssam"];
   var ADMIN_IDS   = [];
