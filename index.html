@@ -673,7 +673,7 @@
       <div class="sub">티끌모아 잘살궁리 1기 · 실시간 수강생 현황</div>
       <div class="kpis">
         <div class="kpi"><div class="k">등록 수강생</div><div class="v" id="kpiCount">0<small>명</small></div><div class="d">로그인 기준</div></div>
-        <div class="kpi"><div class="k">1주차 제출률</div><div class="v">—</div><div class="d" style="color:var(--muted)">9/7 오픈 예정</div></div>
+        <div class="kpi"><div class="k">1주차 제출률</div><div class="v">—</div><div class="d" style="color:var(--muted)">8/31 오픈</div></div>
         <div class="kpi"><div class="k">완주 진행률</div><div class="v">—</div><div class="d" style="color:var(--muted)">4주 과정</div></div>
         <div class="kpi"><div class="k">챌린지 시작</div><div class="v" style="font-size:20px">8/31</div><div class="d">월요일</div></div>
       </div>
@@ -767,15 +767,15 @@
   function $(id){return document.getElementById(id);}
 
   var weeks=[
-    {wk:'OT',em:'🎬',who:'너궁리',cls:'g',title:'오리엔테이션 · 마인드셋',date:'8/31(월) 오픈',live:true,link:'https://app.notion.com/p/3cb4e2258c8e80568caedb60a8ae923b',linkLabel:'OT 안내 보기 (노션)',
+    {wk:'OT',em:'🎬',who:'너궁리',cls:'g',title:'오리엔테이션 · 마인드셋',date:'8/24(월) 오픈',live:true,link:'https://app.notion.com/p/3cb4e2258c8e80568caedb60a8ae923b',linkLabel:'OT 안내 보기 (노션)',
      pts:['챌린지 시작 · 4주 로드맵 안내','"나만의 이유" 세팅하기','완주 페이백 규칙 안내']},
-    {wk:'WEEK 1',em:'🪙',who:'금융쌤',cls:'h',title:'내 자산 그릇 점검하기',date:'9/7(월) 오픈',live:false,
+    {wk:'WEEK 1',em:'🪙',who:'금융쌤',cls:'h',title:'내 자산 그릇 점검하기',date:'8/31(월) 오픈',live:true,vod:'https://youtu.be/mOCmAG_kNq8',
      pts:['포트폴리오 진단 · 현금 상태 파악','자산·부채·소득·지출 정리법','내 순자산 = 지금 나의 출발선']},
-    {wk:'WEEK 2',em:'🛡️',who:'금융쌤',cls:'h',title:'평생 흔들리지 않는 자산구조',date:'9/14(월) 오픈',live:false,
+    {wk:'WEEK 2',em:'🛡️',who:'금융쌤',cls:'h',title:'평생 흔들리지 않는 자산구조',date:'9/7(월) 오픈',live:false,
      pts:['노후 구멍 메우기 · 시드머니 보호','연금 3층 구조 (국민·퇴직·개인)','ISA · 연금저축 · IRP 절세 활용']},
-    {wk:'WEEK 3',em:'🏠',who:'너궁리',cls:'g',title:'내 집 마련 기초',date:'9/21(월) 오픈',live:false,
+    {wk:'WEEK 3',em:'🏠',who:'너궁리',cls:'g',title:'내 집 마련 기초',date:'9/14(월) 오픈',live:false,
      pts:['집 매수의 목적과 방법','나에게 맞는 선택 기준 잡기','내 집 마련 자금 로드맵']},
-    {wk:'WEEK 4',em:'🧭',who:'너궁리',cls:'g',title:'나만의 똘똘한 1채 찾기',date:'9/28(월) 오픈',live:false,
+    {wk:'WEEK 4',em:'🧭',who:'너궁리',cls:'g',title:'나만의 똘똘한 1채 찾기',date:'9/21(월) 오픈',live:false,
      pts:['프롭테크 활용법 (호갱노노·아실)','효율적인 임장법','내 집 후보 3곳 찾기']}
   ];
   var lecs=$('lecs');
@@ -808,11 +808,11 @@
   /* ===== 과제 게시판 / 제출 (Supabase) ===== */
   function hdr(){return {apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY};}
   var wkMeta=[
-    {n:0,label:'OT',title:'오리엔테이션 · 나만의 이유',due:'9/6',asset:false},
-    {n:1,label:'WEEK 1',title:'내 자산 그릇 점검하기',due:'9/13',asset:true},
-    {n:2,label:'WEEK 2',title:'평생 흔들리지 않는 자산구조',due:'9/20',asset:false},
-    {n:3,label:'WEEK 3',title:'내 집 마련 기초',due:'9/27',asset:false},
-    {n:4,label:'WEEK 4',title:'나만의 똘똘한 1채 찾기',due:'10/4',asset:false}
+    {n:0,label:'OT',title:'오리엔테이션 · 나만의 이유',due:'8/30',asset:false},
+    {n:1,label:'WEEK 1',title:'내 자산 그릇 점검하기',due:'9/6',asset:true},
+    {n:2,label:'WEEK 2',title:'평생 흔들리지 않는 자산구조',due:'9/13',asset:false},
+    {n:3,label:'WEEK 3',title:'내 집 마련 기초',due:'9/20',asset:false},
+    {n:4,label:'WEEK 4',title:'나만의 똘똘한 1채 찾기',due:'9/27',asset:false}
   ];
   var mySubs={}, board=$('taskBoard'), curW=0;
   function renderTaskBoard(){
