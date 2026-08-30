@@ -115,6 +115,22 @@
   .stp .st{font-size:15px;font-weight:800;margin:6px 0 4px;letter-spacing:-.01em}
   .stp .sd{font-size:12px;color:var(--muted);font-weight:600;line-height:1.5}
 
+  /* 재테크 계산기 */
+  .tools{display:grid;gap:12px}
+  .toolcard{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);text-decoration:none;color:inherit;transition:.16s}
+  .toolcard:hover{border-color:var(--green);box-shadow:0 6px 20px rgba(22,163,74,.13);transform:translateY(-2px)}
+  .toolcard .ticon{width:52px;height:52px;flex:none;border-radius:14px;background:var(--green-s);
+    display:grid;place-items:center;font-size:26px}
+  .toolcard .tbody{flex:1;min-width:0}
+  .toolcard .ttl{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+  .toolcard .tds{font-size:13px;color:var(--ink2);font-weight:600;line-height:1.5;margin-top:3px}
+  .toolcard .tgo{flex:none;font-size:13.5px;font-weight:800;color:#fff;background:var(--green);
+    padding:9px 15px;border-radius:11px;white-space:nowrap}
+  .toolcard:hover .tgo{background:var(--green2)}
+  @media(max-width:560px){.toolcard{padding:15px 16px;gap:12px}.toolcard .ticon{width:44px;height:44px;font-size:22px}
+    .toolcard .ttl{font-size:15px}.toolcard .tds{font-size:12px}.toolcard .tgo{padding:8px 12px;font-size:12.5px}}
+
   /* 과제 */
   .tprog{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);margin-bottom:14px}
   .tprog .t{display:flex;justify-content:space-between;align-items:baseline}
@@ -533,6 +549,7 @@
     <div class="nb"><span class="dot"></span> 티끌모아 잘살궁리</div>
     <div class="nl">
       <button data-go="lecture">강의실</button>
+      <button data-go="tools">계산기</button>
       <button data-go="task">과제</button>
       <button data-go="train">트레이닝</button>
       <button data-go="admin" id="navAdmin" class="admin hide">🔑 관리자</button>
@@ -578,6 +595,22 @@
         <div><div class="sec-lbl">Curriculum</div><div class="sec-h">강의실</div><div class="sec-s">매주 월요일 새 강의가 열려요</div></div>
       </div>
       <div class="lecs" id="lecs"></div>
+    </section>
+
+    <section id="tools">
+      <div class="shead">
+        <div><div class="sec-lbl">Calculator</div><div class="sec-h">재테크 계산기</div><div class="sec-s">과제 전에, 내 숫자를 직접 넣어보세요</div></div>
+      </div>
+      <div class="tools">
+        <a class="toolcard" href="https://eok-calculator.vercel.app" target="_blank" rel="noopener">
+          <div class="ticon">🧮</div>
+          <div class="tbody">
+            <div class="ttl">1억 계산기</div>
+            <div class="tds">월급으로 1억, 언제 만들어질까 — 저축·투자 조합으로 목표 도달 시점을 예측해요</div>
+          </div>
+          <div class="tgo">열기 →</div>
+        </a>
+      </div>
     </section>
 
     <section id="task">
@@ -1075,8 +1108,9 @@
     if(v==='admin'){sv.classList.add('hide');trv.classList.add('hide');ad.classList.remove('hide');window.scrollTo(0,0);return;}
     if(v==='train'){sv.classList.add('hide');ad.classList.add('hide');trv.classList.remove('hide');if(window.__loadTrain)window.__loadTrain();window.scrollTo(0,0);return;}
     ad.classList.add('hide');trv.classList.add('hide');sv.classList.remove('hide');
-    var el=$(v==='lecture'?'lecture':(v==='task'?'task':'studentView'));
-    if(el&&(v==='lecture'||v==='task'))el.scrollIntoView({block:'start'});else window.scrollTo(0,0);
+    var id=(v==='lecture'||v==='task'||v==='tools')?v:'studentView';
+    var el=$(id);
+    if(el&&id!=='studentView')el.scrollIntoView({block:'start'});else window.scrollTo(0,0);
   }
   document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){goto(b.dataset.go);});});
 
