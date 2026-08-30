@@ -583,7 +583,7 @@
           <ul class="schk"><li>매주 월요일 강의 오픈</li><li>영상으로 반복 학습</li></ul></div>
         <div class="stp s2"><div class="sn">STEP 02</div><div class="st">과제 작성·인증</div>
           <ul class="schk"><li>자산표·로드맵 작성</li><li>게시판에 인증글 제출</li></ul></div>
-        <div class="stp s3"><div class="sn">STEP 03</div><div class="st">1:1 트레이닝</div>
+        <div class="stp s3"><div class="sn">STEP 03</div><div class="st">트레이닝</div>
           <ul class="schk"><li>내 상황 맞춤 코칭</li><li>금융쌤과 직접</li></ul></div>
         <div class="stp s4"><div class="sn">STEP 04</div><div class="st">완주 → 페이백</div>
           <ul class="schk"><li>4주 완주 시</li><li>참가비 전액 환급</li></ul></div>
@@ -610,6 +610,14 @@
           </div>
           <div class="tgo">열기 →</div>
         </a>
+        <a class="toolcard" href="https://youtu.be/zsEDHe9cFZg" target="_blank" rel="noopener">
+          <div class="ticon">▶️</div>
+          <div class="tbody">
+            <div class="ttl">1억 계산기 사용법</div>
+            <div class="tds">처음이라 어렵다면? 계산기 사용법을 영상으로 따라 해보세요</div>
+          </div>
+          <div class="tgo">영상 →</div>
+        </a>
       </div>
     </section>
 
@@ -626,7 +634,7 @@
     </section>
 
     <section id="trainpref">
-      <div class="shead"><div><div class="sec-lbl">Training</div><div class="sec-h">1:1 트레이닝 선호</div><div class="sec-s">금융쌤과의 1:1 트레이닝, 편한 시간·장소를 골라주세요</div></div></div>
+      <div class="shead"><div><div class="sec-lbl">Training</div><div class="sec-h">트레이닝 선호</div><div class="sec-s">금융쌤과의 트레이닝, 편한 시간·장소를 골라주세요</div></div></div>
       <div class="tpcard">
         <div class="tpq">🕐 선호 시간</div>
         <div class="tpopts" id="prefTime"><button data-pref="평일"><b>평일</b><small>월~금 저녁</small></button><button data-pref="주말"><b>주말</b><small>토·일 낮</small></button></div>
@@ -702,8 +710,8 @@
   <div class="wrap">
     <div class="ahead">
       <span class="tag" style="background:var(--green)">TRAINING</span>
-      <h1>컨설팅 신청 현황</h1>
-      <div class="sub">수강생의 1:1 트레이닝 신청·진행 상태를 한눈에</div>
+      <h1>트레이닝 신청 현황</h1>
+      <div class="sub">수강생의 트레이닝 신청·진행 상태를 한눈에</div>
       <div class="kpis">
         <div class="kpi"><div class="k">전체</div><div class="v" id="trAll">0<small>명</small></div></div>
         <div class="kpi"><div class="k">일정확정</div><div class="v" id="trProg" style="color:var(--green)">0</div></div>
@@ -719,7 +727,7 @@
         <button class="tfbtn" data-tf="미신청">미신청</button>
         <input class="search" id="trSearch" placeholder="이름 검색">
       </div>
-      <div class="tbl"><table><thead><tr><th style="text-align:left">수강생</th><th>선호 시간</th><th>선호 장소</th><th>컨설팅 상태</th></tr></thead><tbody id="trBody"></tbody></table></div>
+      <div class="tbl"><table><thead><tr><th style="text-align:left">수강생</th><th>선호 시간</th><th>선호 장소</th><th>트레이닝 상태</th></tr></thead><tbody id="trBody"></tbody></table></div>
       <p class="fsub" id="trHint" style="text-align:left;margin-top:12px"></p>
     </div>
   </div>
@@ -1077,7 +1085,7 @@
     }).join('') : '<tr><td colspan="4" class="empty">아직 트레이닝 신청자가 없어요</td></tr>';
     var c={'일정확정':0,'신청완료':0,'미신청':0}; trainees.forEach(function(m){c[m.train_status||'미신청']++;});
     $('trAll').innerHTML=trainees.length+'<small>명</small>'; $('trProg').textContent=c['일정확정']; $('trPlan').textContent=c['신청완료']; $('trNone').textContent=c['미신청'];
-    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미신청 → 신청완료 → 일정확정으로 바꿀 수 있어요.' : '＊이미 '+(c['일정확정']+c['신청완료'])+'명이 컨설팅을 신청했어요!';
+    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미신청 → 신청완료 → 일정확정으로 바꿀 수 있어요.' : '＊이미 '+(c['일정확정']+c['신청완료'])+'명이 트레이닝을 신청했어요!';
     if(window.__isAdmin){ tb.querySelectorAll('.stb').forEach(function(b){ b.addEventListener('click',function(){ setTrainStatus(b.dataset.kid,b.dataset.st); }); }); }
   }
   function setTrainStatus(kid,st){
