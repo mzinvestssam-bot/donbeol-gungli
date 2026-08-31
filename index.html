@@ -221,6 +221,9 @@
   .tbadge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px}
   .tbadge.no{background:var(--red-s);color:var(--red)} .tbadge.tmp{background:var(--amber-s);color:#B4780A} .tbadge.done{background:var(--green-s);color:var(--green2)}
   .twrite{flex:none;font-size:13.5px;font-weight:800;background:var(--green);color:#fff;border:0;border-radius:11px;padding:11px 20px}
+  .twlock{flex:none;font-size:13px;font-weight:800;background:var(--line2);color:var(--muted);border:0;border-radius:11px;padding:11px 18px;cursor:default;white-space:nowrap}
+  .calchint{display:flex;align-items:center;gap:8px;background:var(--green-s);border:1px solid #CDEBD6;border-radius:12px;padding:12px 16px;margin-bottom:12px;text-decoration:none;color:var(--ink);font-size:13.5px;font-weight:700;line-height:1.4}
+  .calchint b{color:var(--green2)} .calchint span{margin-left:auto;color:var(--green);font-weight:800;white-space:nowrap}
   .twrite:hover{background:var(--green2)}
   /* 과제 작성 폼 */
   #taskWriteView{padding-top:22px}
@@ -626,7 +629,7 @@
         <div><div class="sec-lbl">Assignment</div><div class="sec-h">과제 게시판</div><div class="sec-s">주차별 과제를 작성·제출하세요. 임시저장도 돼요.</div></div>
       </div>
       <div class="tprog">
-        <div class="t"><span>제출 완료</span><b><span id="subDone">0</span> / 5</b></div>
+        <div class="t"><span>제출 완료</span><b><span id="subDone">0</span> / 4</b></div>
         <div class="bar"><i id="bar"></i></div>
         <div class="msg" id="pmsg">아직 제출한 과제가 없어요. 이번 주 과제부터 작성해봐요</div>
       </div>
@@ -816,17 +819,21 @@
   ];
   var mySubs={}, board=$('taskBoard'), curW=0;
   function renderTaskBoard(){
-    board.innerHTML=wkMeta.map(function(w){
-      var s=mySubs[w.n];
+    board.innerHTML=wkMeta.filter(function(w){return w.n>=1;}).map(function(w){
+      var wk=weeks[w.n], isOpen=!!(wk&&wk.live), s=mySubs[w.n];
+      if(!isOpen){
+        return '<div class="tcardw"><div class="tcl"><div class="twk">'+w.label+' <span class="tbadge no">예정</span></div><div class="ttt">'+w.title+'</div><div class="tdue">마감 '+w.due+'(일)</div></div>'+
+          '<button class="twlock" disabled>🔒 '+(wk?wk.date:'오픈 예정')+'</button></div>';
+      }
       var badge=s?(s.status==='제출'?'<span class="tbadge done">제출 완료</span>':'<span class="tbadge tmp">임시저장</span>'):'<span class="tbadge no">미작성</span>';
       return '<div class="tcardw"><div class="tcl"><div class="twk">'+w.label+' '+badge+'</div><div class="ttt">'+w.title+'</div><div class="tdue">마감 '+w.due+'(일)</div></div>'+
         '<button class="twrite" data-w="'+w.n+'">'+(s?'수정하기':'작성하기')+'</button></div>';
     }).join('');
-    var done=0; wkMeta.forEach(function(w){ if(mySubs[w.n]&&mySubs[w.n].status==='제출')done++; });
-    var pct=Math.round(done/5*100);
+    var done=0; wkMeta.forEach(function(w){ if(w.n>=1&&mySubs[w.n]&&mySubs[w.n].status==='제출')done++; });
+    var pct=Math.round(done/4*100);
     $('subDone').textContent=done; var bar=$('bar'); if(bar)bar.style.width=pct+'%';
     var hp=$('heroPct'); if(hp)hp.textContent=pct+'%';
-    var pm=$('pmsg'); if(pm)pm.textContent=done===0?'아직 제출한 과제가 없어요. 이번 주 과제부터 작성해봐요':(done>=5?'모든 과제 제출 완료! 완주 축하해요 🎉':(done+'개 제출했어요. 계속 가봐요!'));
+    var pm=$('pmsg'); if(pm)pm.textContent=done===0?'아직 제출한 과제가 없어요. 이번 주 과제부터 작성해봐요':(done>=4?'모든 과제 제출 완료! 완주 축하해요 🎉':(done+'개 제출했어요. 계속 가봐요!'));
     board.querySelectorAll('.twrite').forEach(function(b){ b.addEventListener('click',function(){ openWrite(+b.dataset.w); }); });
   }
   function loadMy(){
@@ -848,7 +855,8 @@
     curW=w; var meta=wkMeta[w]; var s=mySubs[w]||{};
     var html='<div class="twh"><div class="twlab">'+meta.label+'</div><h2>'+meta.title+'</h2><div class="twdue">⏰ 마감 '+meta.due+'(일) 23:59 · 미제출 시 강퇴</div></div>';
     if(meta.asset){
-      html+='<div class="fcard"><h3>📋 자산 현황표</h3><p class="fsub2">본인 숫자로 채워주세요. 합계는 자동 계산돼요.</p>'+
+      html+='<a class="calchint" href="https://eok-calculator.vercel.app" target="_blank" rel="noopener">🧮 숫자가 헷갈리면 <b>1억 계산기</b>로 목표 시점부터 확인해보세요<span>열기 →</span></a>';
+      html+='<div class="fcard"><h3>📋 자산 현황표</h3><p class="fsub2">본인 숫자로 채우면 맨 아래 <b>순자산이 자동 계산</b>돼요. 이게 지금 내 출발선이에요.</p>'+
         '<div class="fgrid">'+
         grp('💰 자산',assetRows)+'<div class="mrow tot"><span>자산 합계</span><b id="tAsset">0</b><em>만원</em></div></div>'+
         grp('🏦 부채',debtRows)+'<div class="mrow tot"><span>부채 합계</span><b id="tDebt">0</b><em>만원</em></div></div>'+
@@ -937,7 +945,7 @@
   function renderM(){
     var list=members.filter(function(m){return (curF==='all'||m.st===curF)&&(!curQ||m.nm.indexOf(curQ)>-1);});
     mBody.innerHTML=list.length?list.map(function(m){
-      var done=m.w.filter(function(x){return x>0;}).length,pct=Math.round(done/5*100);
+      var done=m.w.filter(function(x){return x>0;}).length,pct=Math.round(done/4*100);
       return '<tr'+(m.removed?' style="opacity:.45"':'')+'><td class="nm">'+m.nm+'</td>'+m.w.map(function(v){return '<td>'+mark(v)+'</td>';}).join('')+
         '<td><div class="mini"><i style="width:'+pct+'%"></i></div><div style="font-size:10.5px;margin-top:3px;color:var(--muted)">'+pct+'%</div></td>'+
         '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td>'+m.act+'</td>'+
