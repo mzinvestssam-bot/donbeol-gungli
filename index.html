@@ -822,8 +822,10 @@
     board.innerHTML=wkMeta.filter(function(w){return w.n>=1;}).map(function(w){
       var wk=weeks[w.n], isOpen=!!(wk&&wk.live), s=mySubs[w.n];
       if(!isOpen){
-        return '<div class="tcardw"><div class="tcl"><div class="twk">'+w.label+' <span class="tbadge no">예정</span></div><div class="ttt">'+w.title+'</div><div class="tdue">마감 '+w.due+'(일)</div></div>'+
-          '<button class="twlock" disabled>🔒 '+(wk?wk.date:'오픈 예정')+'</button></div>';
+        var lockBtn = window.__isAdmin
+          ? '<button class="twrite" data-w="'+w.n+'" style="background:var(--ink2)">👁 미리보기</button>'
+          : '<button class="twlock" disabled>🔒 '+(wk?wk.date:'오픈 예정')+'</button>';
+        return '<div class="tcardw"><div class="tcl"><div class="twk">'+w.label+' <span class="tbadge no">예정</span></div><div class="ttt">'+w.title+'</div><div class="tdue">마감 '+w.due+'(일)</div></div>'+lockBtn+'</div>';
       }
       var badge=s?(s.status==='제출'?'<span class="tbadge done">제출 완료</span>':'<span class="tbadge tmp">임시저장</span>'):'<span class="tbadge no">미작성</span>';
       return '<div class="tcardw"><div class="tcl"><div class="twk">'+w.label+' '+badge+'</div><div class="ttt">'+w.title+'</div><div class="tdue">마감 '+w.due+'(일)</div></div>'+
