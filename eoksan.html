@@ -153,11 +153,10 @@ input[type=range]:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in s
 .ladder .ln{flex:none;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;margin-top:1px}
 .ladder .lb b{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
 .ladder .lb small{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px;line-height:1.45}
-.nextbtn{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;width:100%;
-  background:var(--green);color:#fff;text-decoration:none;font-weight:800;font-size:14.5px;letter-spacing:-.01em;
-  padding:14px 20px;border-radius:13px;transition:background .15s}
-.nextbtn:hover{background:var(--green-d)}
-.nextbtn:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 30%,transparent)}
+.nexthint{margin:16px 0 0;font-size:13.5px;font-weight:700;color:var(--green-d);
+  background:color-mix(in srgb,var(--green) 8%,var(--card));border:1px solid color-mix(in srgb,var(--green) 22%,transparent);
+  border-radius:12px;padding:13px 16px}
+.nexthint b{font-weight:800}
 
 .foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.7}
 .foot b{color:var(--ink2);font-weight:700}
@@ -253,7 +252,7 @@ input[type=range]:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in s
           <li><span class="ln">2</span><div class="lb"><b>맞춤 산업 영상</b><small>여러분이 적어준 산업으로 다음 강의를 준비해요.</small></div></li>
           <li><span class="ln">3</span><div class="lb"><b>트레이닝에서 내 포트 완성</b><small>내 GAP·저축액에 맞춰 경제자유용·시드증액용 트랙을 함께.</small></div></li>
         </ol>
-        <a class="nextbtn" href="https://donbeol-gungli.vercel.app" target="_blank" rel="noopener">과제에서 관심 산업 적기 →</a>
+        <p class="nexthint">→ 관심 산업은 <b>아래 과제 ③번 칸</b>에 바로 적어주시면 돼요.</p>
       </section>
     </section>
   </div>
