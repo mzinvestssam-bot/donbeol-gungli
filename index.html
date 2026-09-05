@@ -1204,7 +1204,7 @@
         window.__me={id:String(myId), nick:nick};
         window.__isAdmin=checkAdmin(nick, myId);
         if(window.__isAdmin){ if(window.__refreshRoster) window.__refreshRoster(); }
-        else { if(window.__loadMy) window.__loadMy(); }
+        if(window.__loadMy) window.__loadMy();
         if(window.__loadTrain) window.__loadTrain();
         route(nick, myId);
       })
