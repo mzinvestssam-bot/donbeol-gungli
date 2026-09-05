@@ -229,6 +229,8 @@
   .w2num{width:100%;font-family:inherit;font-size:17px;font-weight:800;color:var(--ink);border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--bg);outline:none;-moz-appearance:textfield}
   .w2num:focus{border-color:var(--green)}
   .w2num::-webkit-outer-spin-button,.w2num::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .calcembed{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+  .calcembed iframe{width:100%;height:1200px;border:0;display:block}
   .twrite:hover{background:var(--green2)}
   /* 과제 작성 폼 */
   #taskWriteView{padding-top:22px}
@@ -874,9 +876,9 @@
         rmPeriods.map(function(p,i){return '<tr><td class="rp">'+p+'</td><td><input data-rm="'+i+'-a"></td><td><input data-rm="'+i+'-h"></td><td><input data-rm="'+i+'-e"></td></tr>';}).join('')+'</tbody></table></div></div>';
     }
     else if(meta.w2){
-      html+='<div class="fcard"><h3>① 역산기로 내 GAP 계산하기</h3><p class="fsub2">아래 버튼으로 <b>경제적 자유 역산기</b>를 열어 내 숫자를 넣고, 나온 <b>GAP 금액</b>을 적어주세요.</p>'+
-        '<a class="calcbtn" href="/eoksan.html" target="_blank" rel="noopener">경제적 자유 역산기 열기 →</a>'+
-        '<div style="font-weight:800;font-size:13.5px;margin:18px 0 7px">내가 만들어야 할 금액 · GAP</div>'+
+      html+='<div class="fcard"><h3>① 역산기로 내 GAP 계산하기</h3><p class="fsub2">아래 계산기에 <b>내 숫자를 바로 입력</b>하면 GAP이 나와요. 나온 <b>GAP 금액</b>을 맨 아래 칸에 적어주세요.</p>'+
+        '<div class="calcembed"><iframe src="/eoksan.html" title="경제적 자유 역산기" onload="try{this.style.height=(this.contentWindow.document.body.scrollHeight+20)+\'px\';}catch(e){}"></iframe></div>'+
+        '<div style="font-weight:800;font-size:13.5px;margin:18px 0 7px">위에서 나온 내 GAP 금액</div>'+
         '<input class="w2num" data-rm="w2-gap" type="number" inputmode="numeric" placeholder="예) 70500  (만원)"></div>';
       html+='<div class="fcard"><h3>② 투트랙 방향 초안</h3><p class="fsub2">1주차에 정리한 내 자산을 기준으로, 내 돈을 두 갈래로 나눠본다면? 대충이라도 OK.</p>'+
         '<div style="font-weight:800;font-size:13.5px;margin:4px 0 6px">경제적 자유용 <span style="color:var(--muted);font-weight:600">— 평생 나올 소득 트랙</span></div>'+
