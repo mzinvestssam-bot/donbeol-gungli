@@ -862,7 +862,7 @@
   function grp(title,rows){return '<div class="fg"><b class="gh">'+title+'</b>'+rows.map(function(r){return mrow(r[0],r[1]);}).join('');}
   function openWrite(w){
     curW=w; var meta=wkMeta[w]; var s=mySubs[w]||{};
-    var html='<div class="twh"><div class="twlab">'+meta.label+'</div><h2>'+meta.title+'</h2><div class="twdue">⏰ 마감 '+meta.due+'(일) 23:59 · 미제출 시 강퇴</div></div>';
+    var html='<div class="twh"><div class="twlab">'+meta.label+'</div><h2>'+meta.title+'</h2><div class="twdue">⏰ 마감 '+meta.due+'(일) 23:59'+(w===1?' · 미제출 시 강퇴':'')+'</div></div>';
     if(meta.asset){
       html+='<a class="calchint" href="https://eok-calculator.vercel.app" target="_blank" rel="noopener">🧮 숫자가 헷갈리면 <b>1억 계산기</b>로 목표 시점부터 확인해보세요<span>열기 →</span></a>';
       html+='<div class="fcard"><h3>📋 자산 현황표</h3><p class="fsub2">본인 숫자로 채우면 맨 아래 <b>순자산이 자동 계산</b>돼요. 이게 지금 내 출발선이에요.</p>'+
@@ -887,7 +887,7 @@
         '<textarea data-rm="w2-seed" placeholder="예) SP500 지수 + 관심 산업 ETF, 유동성 있게"></textarea></div>';
       html+='<div class="fcard"><h3>③ 다음에 배우고 싶은 산업·투자처</h3><p class="fsub2">여러분이 적어주신 산업으로 <b>다음 영상</b>을 준비해드려요! 모르겠으면 "아직 모르겠어요"도 정답이에요 (트레이닝에서 같이 잡아요).</p>'+
         '<textarea data-rm="w2-industry" placeholder="예) AI 반도체 / 방산 / 2차전지 … 또는 아직 모르겠어요"></textarea></div>';
-      html+='<div class="fcard"><h3>④ 내 연금·절세 현황 <small style="font-weight:700;color:var(--muted);font-size:12px">(선택)</small></h3><p class="fsub2">연금저축·IRP 있으신가요? 연말정산 때 토해내나요, 환급받나요? 절세 트레이닝 때 참고해요.</p>'+
+      html+='<div class="fcard"><h3>④ 내 연금·절세 현황</h3><p class="fsub2">연금저축·IRP 있으신가요? 연말정산 때 토해내나요, 환급받나요? 절세 트레이닝 때 참고해요.</p>'+
         '<textarea data-rm="w2-pension" placeholder="예) 연금저축 있음, 작년 연말정산 20만원 토해냄 / 또는 아직 없음"></textarea></div>';
     }
     html+='<div class="fcard"><h3>💬 인증 글 + 캡처</h3><p class="fsub2">이번 주 배운 점·느낀 점·고민을 자유롭게 적어주세요. 캡처·사진 첨부도 돼요.</p><textarea id="twNote" placeholder="예) 처음 자산을 정리해보니 생각보다 부채가 많아서 놀랐어요..."></textarea><label class="fileadd">📎 이미지 첨부 <span>(최대 5장)</span><input type="file" id="twFiles" accept="image/*" multiple hidden></label><div id="twPreview" class="fpreview"></div></div>';
