@@ -214,7 +214,7 @@ input[type=range]:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in s
           <div class="row"><span class="rl">은퇴 후 생존 기간</span><span class="rv tnum"><span id="rRetire">30</span><span class="ru">년</span></span></div>
           <div class="row"><span class="rl">월 필요 생활비 <span id="rInflNote" style="color:var(--muted);font-weight:600"></span></span><span class="rv tnum"><span id="rNeed">250</span><span class="ru">만원</span></span></div>
           <div class="row"><span class="rl">총 필요 자금</span><span class="rv tnum"><span id="rTotal">90,000</span><span class="ru">만원</span></span></div>
-          <div class="row"><span class="rl">국민연금 총 수령액 (추정)</span><span class="rv tnum" style="color:var(--gold)"><span id="rPension">23,400</span><span class="ru">만원</span></span></div>
+          <div class="row"><span class="rl">국민연금 총 수령액 <span style="color:var(--muted);font-weight:600">(65세부터 추정)</span></span><span class="rv tnum" style="color:var(--gold)"><span id="rPension">19,500</span><span class="ru">만원</span></span></div>
         </div>
       </div>
 
@@ -294,7 +294,8 @@ input[type=range]:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in s
     var inflMult=infl?1.5:1;
     var needAdj=need*inflMult;
     var total=needAdj*12*retire;           // 총 필요 자금 (만원)
-    var pensionTotal=pensionM*12*retire;    // 국민연금 총 (만원)
+    var pensionYears=Math.max(0, lifeAge-Math.max(65, freeAge)); // 국민연금은 65세부터 수령
+    var pensionTotal=pensionM*12*pensionYears;
     var gap=Math.max(0, total-pensionTotal);
 
     // 소득 대비 생활비 비율
