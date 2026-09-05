@@ -792,19 +792,25 @@
      pts:['프롭테크 활용법 (호갱노노·아실)','효율적인 임장법','내 집 후보 3곳 찾기']}
   ];
   var lecs=$('lecs');
-  weeks.forEach(function(w,wi){
-    var d=document.createElement('div');d.className='lec '+w.cls;
-    var pts=w.pts.map(function(p){return '<li>'+p+'</li>';}).join('');
-    var btn=w.link?'<a class="vod play" href="'+w.link+'" target="_blank" rel="noopener" style="text-decoration:none">📖 '+(w.linkLabel||'안내 보기')+'</a>'
-                  :w.live?'<button class="vod play" data-vod="'+wi+'">▶ 강의 보기</button><div class="vodbox" id="vodbox'+wi+'"></div>'
-                  :'<button class="vod lock">🔒 '+w.date+'</button>';
-    d.innerHTML='<div class="idx"><div class="wk">'+w.wk+'</div></div>'+
-      '<div class="body"><div class="top"><span class="who '+w.cls+'">'+w.who+'</span>'+
-      '<span class="stt '+(w.live?'on':'soon')+'">'+(w.live?'공개중':'예정')+'</span></div>'+
-      '<h3>'+w.title+'</h3><ul>'+pts+'</ul><div class="foot">'+btn+'</div></div>';
-    lecs.appendChild(d);
-    var pb=d.querySelector('button.vod.play'); if(pb)pb.addEventListener('click',function(){playVod(wi);});
-  });
+  function renderLecs(){
+    lecs.innerHTML='';
+    weeks.forEach(function(w,wi){
+      var d=document.createElement('div');d.className='lec '+w.cls;
+      var pts=w.pts.map(function(p){return '<li>'+p+'</li>';}).join('');
+      var canPrev=!w.live && w.vod && window.__isAdmin;
+      var btn=w.link?'<a class="vod play" href="'+w.link+'" target="_blank" rel="noopener" style="text-decoration:none">📖 '+(w.linkLabel||'안내 보기')+'</a>'
+                    :(w.live||canPrev)?'<button class="vod play" data-vod="'+wi+'">▶ 강의 보기'+(canPrev?' (미리보기)':'')+'</button><div class="vodbox" id="vodbox'+wi+'"></div>'
+                    :'<button class="vod lock">🔒 '+w.date+'</button>';
+      d.innerHTML='<div class="idx"><div class="wk">'+w.wk+'</div></div>'+
+        '<div class="body"><div class="top"><span class="who '+w.cls+'">'+w.who+'</span>'+
+        '<span class="stt '+(w.live?'on':'soon')+'">'+(w.live?'공개중':'예정')+'</span></div>'+
+        '<h3>'+w.title+'</h3><ul>'+pts+'</ul><div class="foot">'+btn+'</div></div>';
+      lecs.appendChild(d);
+      var pb=d.querySelector('button.vod.play'); if(pb)pb.addEventListener('click',function(){playVod(wi);});
+    });
+  }
+  window.__renderLecs=renderLecs;
+  renderLecs();
   function embedHtml(url){
     var yt=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/);
     if(yt)return '<div class="vodwrap"><iframe src="https://www.youtube.com/embed/'+yt[1]+'" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>';
@@ -1254,6 +1260,7 @@
         window.__isAdmin=checkAdmin(nick, myId);
         if(window.__isAdmin){ if(window.__refreshRoster) window.__refreshRoster(); }
         if(window.__loadMy) window.__loadMy();
+        if(window.__renderLecs) window.__renderLecs();
         if(window.__loadTrain) window.__loadTrain();
         route(nick, myId);
       })
