@@ -1,0 +1,380 @@
+<title>경제적 자유 역산기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#FBF7EF; --card:#FFFFFF; --card2:#F5F0E4; --line:#E8DFCC; --line2:#F0E9D9;
+  --ink:#1F2A1E; --ink2:#43503E; --muted:#8A9280;
+  --green:#2F7D4E; --green-d:#22613C; --leaf:#4E9E5F;
+  --gold:#B6852A; --gold-soft:#EFE6CC;
+  --danger:#BC5330; --good:#2F7D4E;
+  --heroA:#2C5A3C; --heroB:#204630; --heroInk:#F3EEDF; --heroGold:#EAC873;
+  --barPension:#B79A5A; --barGap:#3E8B58;
+  --shadow:0 1px 2px rgba(40,50,35,.04),0 10px 30px -12px rgba(40,50,35,.14);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12160F; --card:#1B2016; --card2:#232A1C; --line:#333C29; --line2:#2A3123;
+  --ink:#ECF1E4; --ink2:#C2CBB6; --muted:#8E977F;
+  --green:#69BC82; --green-d:#4F9E68; --leaf:#7CC65E;
+  --gold:#E0B457; --gold-soft:#2E2A1A;
+  --danger:#E08A63; --good:#69BC82;
+  --heroA:#234432; --heroB:#182E20; --heroInk:#EDF2E2; --heroGold:#EAC873;
+  --barPension:#9C8446; --barGap:#4E9E68;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -14px rgba(0,0,0,.55);
+}}
+:root[data-theme="dark"]{
+  --bg:#12160F; --card:#1B2016; --card2:#232A1C; --line:#333C29; --line2:#2A3123;
+  --ink:#ECF1E4; --ink2:#C2CBB6; --muted:#8E977F;
+  --green:#69BC82; --green-d:#4F9E68; --leaf:#7CC65E;
+  --gold:#E0B457; --gold-soft:#2E2A1A;
+  --danger:#E08A63; --good:#69BC82;
+  --heroA:#234432; --heroB:#182E20; --heroInk:#EDF2E2; --heroGold:#EAC873;
+  --barPension:#9C8446; --barGap:#4E9E68;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -14px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Pretendard','Pretendard Variable','Noto Sans KR',-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;
+  line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum";letter-spacing:-.01em}
+.wrap{max-width:900px;margin:0 auto;padding:34px 20px 72px}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* header */
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--leaf);border-radius:2px}
+h1{font-size:clamp(27px,5vw,38px);font-weight:900;letter-spacing:-.035em;margin:12px 0 8px;text-wrap:balance;line-height:1.12}
+.lead{color:var(--ink2);font-size:15px;max-width:52ch;margin:0}
+.lead b{color:var(--green-d);font-weight:800}
+
+/* cards */
+.grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 22px 24px;box-shadow:var(--shadow)}
+.card > .ct{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
+.ct h2{font-size:16px;font-weight:800;margin:0;letter-spacing:-.02em}
+.ct .cs{font-size:12.5px;color:var(--muted);font-weight:600}
+
+/* inputs */
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;margin-top:16px}
+@media(max-width:540px){.fields{grid-template-columns:1fr}}
+.field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:6px}
+.inp{display:flex;align-items:center;background:var(--card2);border:1.5px solid var(--line);border-radius:12px;
+  padding:0 12px 0 14px;transition:border-color .15s,box-shadow .15s}
+.inp:focus-within{border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 18%,transparent)}
+.inp input{flex:1;width:100%;border:0;background:none;color:var(--ink);font:inherit;font-weight:800;font-size:18px;
+  padding:11px 0;outline:none;-moz-appearance:textfield;letter-spacing:-.02em}
+.inp input::-webkit-outer-spin-button,.inp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.inp .u{font-size:12.5px;color:var(--muted);font-weight:700;flex:none;padding-left:8px}
+
+/* toggle row */
+.toggle{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--card2);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;margin-top:2px}
+.toggle .tl{font-size:12.5px;font-weight:700;color:var(--ink2)}
+.toggle .tl b{color:var(--ink);font-weight:800}.toggle .tl small{color:var(--muted);font-weight:600}
+.sw{position:relative;width:46px;height:26px;flex:none;cursor:pointer}
+.sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.sw .track{position:absolute;inset:0;background:var(--line);border-radius:100px;transition:.2s}
+.sw .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.sw input:checked ~ .track{background:var(--green)}
+.sw input:checked ~ .knob{transform:translateX(20px)}
+.sw input:focus-visible ~ .track{box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 30%,transparent)}
+
+/* derived rows */
+.rows{margin-top:16px;border-top:1px solid var(--line2)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 2px;border-bottom:1px solid var(--line2)}
+.row .rl{font-size:13.5px;color:var(--ink2);font-weight:600}
+.row .rv{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.row .rv .ru{font-size:11.5px;color:var(--muted);font-weight:700;margin-left:3px}
+
+/* hero result */
+.hero{background:linear-gradient(150deg,var(--heroA),var(--heroB));border-radius:20px;padding:26px 24px;color:var(--heroInk);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--heroGold) 22%,transparent),transparent 70%)}
+.hero .hl{font-size:13px;font-weight:700;letter-spacing:.02em;opacity:.9;display:flex;align-items:center;gap:8px;position:relative}
+.hero .hsub{font-size:12px;opacity:.72;margin:4px 0 12px;font-weight:600;position:relative}
+.hero .big{font-size:clamp(34px,8vw,52px);font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--heroGold);position:relative}
+.hero .big .un{font-size:.42em;color:var(--heroInk);opacity:.85;font-weight:800;margin-left:6px;letter-spacing:-.02em}
+.hero .won{font-size:13px;opacity:.75;margin-top:8px;font-weight:600;position:relative}
+
+/* stacked bar */
+.bar{position:relative;margin-top:18px;height:34px;border-radius:9px;overflow:hidden;display:flex;background:var(--line);box-shadow:inset 0 0 0 1px rgba(0,0,0,.03)}
+.bar .seg{height:100%;display:flex;align-items:center;padding:0 10px;font-size:11px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;min-width:0;letter-spacing:-.01em}
+.bar .sp{background:var(--barPension)}
+.bar .sg{background:var(--barGap)}
+.barleg{display:flex;gap:16px;margin-top:9px;font-size:12px;font-weight:600;color:var(--ink2);flex-wrap:wrap}
+.barleg span{display:inline-flex;align-items:center;gap:6px}
+.barleg i{width:10px;height:10px;border-radius:3px;flex:none}
+.barleg .ip{background:var(--barPension)}.barleg .ig{background:var(--barGap)}
+.hero .barleg{color:color-mix(in srgb,var(--heroInk) 74%,transparent)}
+.hero .barleg b{color:var(--heroInk);font-weight:800}
+.hero .barleg .ip{background:var(--heroGold)}
+
+/* path cards */
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:600px){.paths{grid-template-columns:1fr}}
+.path{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:18px}
+.path.hi{border-color:var(--green);background:color-mix(in srgb,var(--green) 8%,var(--card))}
+.path .pt{font-size:12px;font-weight:800;letter-spacing:.02em;display:flex;align-items:center;gap:7px;color:var(--ink2)}
+.path.hi .pt{color:var(--green-d)}
+.path .pv{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:8px 0 2px;line-height:1.1}
+.path .pv small{font-size:14px;font-weight:800;color:var(--muted)}
+.path .pd{font-size:12.5px;color:var(--ink2);font-weight:600;line-height:1.5}
+.path .warn{color:var(--danger);font-weight:800}
+.path .ok{color:var(--good);font-weight:800}
+
+/* return slider */
+.retbox{margin-top:16px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+.retbox .rh{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.retbox .rh .rt{font-size:13px;font-weight:800;color:var(--ink2)}
+.retbox .rh .rn{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-.03em}
+.retbox .rh .rn small{font-size:13px;color:var(--muted);font-weight:800}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:100px;margin:14px 0 6px;
+  background:linear-gradient(90deg,var(--leaf) var(--pct,50%),var(--line) var(--pct,50%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+  border:3px solid var(--green);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--green);cursor:pointer}
+input[type=range]:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 25%,transparent);border-radius:100px}
+.retticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);font-weight:600}
+
+.takeaway{margin-top:16px;display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);
+  border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:14px;padding:14px 16px}
+.takeaway .ic{font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--gold);flex:none;padding:3px 8px;border:1px solid color-mix(in srgb,var(--gold) 34%,transparent);border-radius:6px;line-height:1.3}
+.takeaway p{margin:0;font-size:13.5px;color:var(--ink);font-weight:600;line-height:1.55}
+.takeaway b{color:var(--gold);font-weight:800}
+.path .pt .d{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.path.hi .pt .d{background:var(--green)}
+
+/* next-step funnel */
+.next .nextlead{margin:12px 0 4px;font-size:13.5px;color:var(--ink2);font-weight:600;line-height:1.55}
+.next .nextlead b{color:var(--green-d);font-weight:800}
+.ladder{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:2px;counter-reset:none}
+.ladder li{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line2)}
+.ladder li:last-child{border-bottom:0}
+.ladder .ln{flex:none;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;margin-top:1px}
+.ladder .lb b{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.ladder .lb small{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px;line-height:1.45}
+.nextbtn{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;width:100%;
+  background:var(--green);color:#fff;text-decoration:none;font-weight:800;font-size:14.5px;letter-spacing:-.01em;
+  padding:14px 20px;border-radius:13px;transition:background .15s}
+.nextbtn:hover{background:var(--green-d)}
+.nextbtn:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 30%,transparent)}
+
+.foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.7}
+.foot b{color:var(--ink2);font-weight:700}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">티끌모아 잘살궁리 · WEEK 2</div>
+    <h1>경제적 자유, 얼마부터 시작일까</h1>
+    <p class="lead">“얼마 모아야지”가 아니라 <b>은퇴 후 한 달에 얼마면 살까</b>부터 거꾸로 계산해요. 숫자를 넣으면 내 <b>GAP</b>과, 저축만 할 때 vs 복리로 굴릴 때가 실시간으로 갈립니다.</p>
+  </header>
+
+  <div class="grid">
+    <!-- INPUT -->
+    <section class="card">
+      <div class="ct"><h2>나의 정보</h2><span class="cs">예시 값이 들어가 있어요 · 내 숫자로 바꿔보세요</span></div>
+      <div class="fields">
+        <div class="field"><label>현재 나이</label><div class="inp"><input id="curAge" type="number" min="15" max="80" value="33"><span class="u">세</span></div></div>
+        <div class="field"><label>목표 경제적 자유 나이</label><div class="inp"><input id="freeAge" type="number" min="30" max="90" value="60"><span class="u">세</span></div></div>
+        <div class="field"><label>예상 수명</label><div class="inp"><input id="lifeAge" type="number" min="60" max="110" value="90"><span class="u">세</span></div></div>
+        <div class="field"><label>현재 월 소득 (세후)</label><div class="inp"><input id="income" type="number" min="0" step="10" value="350"><span class="u">만원</span></div></div>
+        <div class="field"><label>은퇴 후 월 생활비</label><div class="inp"><input id="needMonthly" type="number" min="0" step="10" value="250"><span class="u">만원</span></div></div>
+        <div class="field"><label>월 저축·투자 가능액</label><div class="inp"><input id="save" type="number" min="0" step="10" value="100"><span class="u">만원</span></div></div>
+        <div class="field"><label>국민연금 예상 수령 (월)</label><div class="inp"><input id="pension" type="number" min="0" step="5" value="65"><span class="u">만원</span></div></div>
+        <div class="field"><label>월 생활비 · 소득 대비</label><div class="inp"><input id="ratio" type="number" value="71" disabled style="opacity:.7"><span class="u">%</span></div></div>
+        <div class="toggle">
+          <div class="tl"><b>물가상승 반영</b> <small>· 미래 생활비를 약 1.5배로 보정</small></div>
+          <label class="sw"><input id="infl" type="checkbox"><span class="track"></span><span class="knob"></span></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section>
+      <div class="hero">
+        <div class="hl">내가 만들어야 할 금액 · GAP</div>
+        <div class="hsub" id="gapFormula">총 필요 자금 − 국민연금 총 수령액</div>
+        <div class="big tnum"><span id="gapMain">6억 6,600</span><span class="un">만원</span></div>
+        <div class="won tnum" id="gapWon">= 66,600만원</div>
+        <div class="bar" id="bar">
+          <div class="seg sp" id="segP" style="width:26%">연금</div>
+          <div class="seg sg" id="segG" style="width:74%">내가 만들 몫</div>
+        </div>
+        <div class="barleg">
+          <span><i class="ip"></i>국민연금이 채워주는 몫 <b class="tnum" id="legP" style="margin-left:2px">2.3억</b></span>
+          <span><i class="ig"></i>내가 만들어야 할 GAP <b class="tnum" id="legG" style="margin-left:2px">6.6억</b></span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="ct"><h2>계산 근거</h2><span class="cs">거꾸로 역산</span></div>
+        <div class="rows">
+          <div class="row"><span class="rl">경제적 자유까지 남은 기간</span><span class="rv tnum"><span id="rRemain">27</span><span class="ru">년</span></span></div>
+          <div class="row"><span class="rl">은퇴 후 생존 기간</span><span class="rv tnum"><span id="rRetire">30</span><span class="ru">년</span></span></div>
+          <div class="row"><span class="rl">월 필요 생활비 <span id="rInflNote" style="color:var(--muted);font-weight:600"></span></span><span class="rv tnum"><span id="rNeed">250</span><span class="ru">만원</span></span></div>
+          <div class="row"><span class="rl">총 필요 자금</span><span class="rv tnum"><span id="rTotal">90,000</span><span class="ru">만원</span></span></div>
+          <div class="row"><span class="rl">국민연금 총 수령액 (추정)</span><span class="rv tnum" style="color:var(--gold)"><span id="rPension">23,400</span><span class="ru">만원</span></span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="ct"><h2>어떻게 만들까 — 두 갈래 길</h2></div>
+        <div class="paths">
+          <div class="path" id="pathSave">
+            <div class="pt"><span class="d"></span>저축만 · 단리</div>
+            <div class="pv tnum"><span id="saveYears">56</span><small>년 걸림</small></div>
+            <div class="pd" id="saveDesc">지금처럼 월 100만원을 <b>모으기만</b> 하면 GAP까지 이만큼 걸려요.</div>
+          </div>
+          <div class="path hi" id="pathInv">
+            <div class="pt"><span class="d"></span>복리 투자</div>
+            <div class="pv tnum"><span id="invMonthly">70</span><small>만원/월</small></div>
+            <div class="pd" id="invDesc">남은 기간 동안 <b>복리로 굴리면</b> 매달 이만큼이면 GAP 달성.</div>
+          </div>
+        </div>
+
+        <div class="retbox">
+          <div class="rh"><span class="rt">기대 수익률로 굴린다면</span><span class="rn tnum"><span id="retVal">7</span><small>%</small></span></div>
+          <input id="ret" type="range" min="0" max="12" step="0.5" value="7">
+          <div class="retticks"><span>0% (예적금 수준)</span><span>SP500 장기 ≈ 7~10%</span><span>12%</span></div>
+        </div>
+
+        <div class="takeaway">
+          <span class="ic">핵심</span>
+          <p id="takeaway">저축만 하면 <b>56년</b>, 복리 7%로는 매달 <b>70만원</b>이면 돼요. 같은 목표인데 담는 그릇만 달라도 부담이 이만큼 줄어요.</p>
+        </div>
+      </div>
+
+      <section class="card next">
+        <div class="ct"><h2>이제, 이 GAP을 무엇으로 채울까</h2></div>
+        <p class="nextlead">복리로 굴릴 이 돈이 바로 <b>‘경제적 자유용 트랙’</b>이에요. 문제는 <b>어떤 산업에 담느냐</b> — 그게 결과를 바꿉니다.</p>
+        <ol class="ladder">
+          <li><span class="ln">1</span><div class="lb"><b>과제에 관심 산업 적기</b><small>‘아직 모르겠어요’도 정답이에요. 방향만 알려주세요.</small></div></li>
+          <li><span class="ln">2</span><div class="lb"><b>맞춤 산업 영상</b><small>여러분이 적어준 산업으로 다음 강의를 준비해요.</small></div></li>
+          <li><span class="ln">3</span><div class="lb"><b>트레이닝에서 내 포트 완성</b><small>내 GAP·저축액에 맞춰 경제자유용·시드증액용 트랙을 함께.</small></div></li>
+        </ol>
+        <a class="nextbtn" href="https://donbeol-gungli.vercel.app" target="_blank" rel="noopener">과제에서 관심 산업 적기 →</a>
+      </section>
+    </section>
+  </div>
+
+  <div class="foot">
+    통계청·국민연금 평균치를 참고선으로 쓴 <b>추정 계산기</b>예요 · 세금·수익률은 예시이고 미래를 보장하지 않아요<br>
+    정확한 내 설계는 <b>트레이닝에서 함께</b> 잡아요
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  var ids=['curAge','freeAge','lifeAge','income','needMonthly','save','pension','infl','ret'];
+  function num(id){return parseFloat($(id).value)||0;}
+
+  // 만원 → "X억 Y,ZZZ만원" (억 without leading comma)
+  function fmtEok(man){
+    man=Math.round(man);
+    if(man<0)man=0;
+    var eok=Math.floor(man/10000), rest=man%10000;
+    if(eok>0) return eok.toLocaleString()+'억'+(rest>0?' '+rest.toLocaleString():'');
+    return rest.toLocaleString();
+  }
+  function fmtEokShort(man){ // "6.6억" / "4,500만"
+    if(man>=10000) return (Math.round(man/1000)/10).toLocaleString()+'억';
+    return Math.round(man).toLocaleString()+'만';
+  }
+  function comma(n){return Math.round(n).toLocaleString();}
+
+  function calc(){
+    var curAge=num('curAge'), freeAge=num('freeAge'), lifeAge=num('lifeAge');
+    var income=num('income'), need=num('needMonthly'), save=num('save'), pensionM=num('pension');
+    var infl=$('infl').checked, ret=num('ret');
+
+    var remain=Math.max(0, freeAge-curAge);
+    var retire=Math.max(0, lifeAge-freeAge);
+    var inflMult=infl?1.5:1;
+    var needAdj=need*inflMult;
+    var total=needAdj*12*retire;           // 총 필요 자금 (만원)
+    var pensionTotal=pensionM*12*retire;    // 국민연금 총 (만원)
+    var gap=Math.max(0, total-pensionTotal);
+
+    // 소득 대비 생활비 비율
+    $('ratio').value = income>0 ? Math.round(need/income*100) : 0;
+
+    // hero
+    $('gapMain').textContent=fmtEok(gap);
+    $('gapWon').textContent='= '+comma(gap)+'만원';
+    $('gapFormula').textContent='총 필요 '+comma(total)+'만 − 국민연금 '+comma(pensionTotal)+'만';
+
+    // bar
+    var pPct = total>0 ? Math.min(100, pensionTotal/total*100) : 0;
+    var gPct = 100-pPct;
+    $('segP').style.width=pPct+'%'; $('segG').style.width=gPct+'%';
+    $('segP').textContent = pPct>12?'연금':''; $('segG').textContent = gPct>18?'내가 만들 몫':'';
+    $('legP').textContent=fmtEokShort(pensionTotal);
+    $('legG').textContent=fmtEokShort(gap);
+
+    // rows
+    $('rRemain').textContent=remain;
+    $('rRetire').textContent=retire;
+    $('rNeed').textContent=comma(needAdj);
+    $('rInflNote').textContent = infl?'(물가 ×1.5 반영)':'';
+    $('rTotal').textContent=comma(total);
+    $('rPension').textContent=comma(pensionTotal);
+
+    // 단리: 저축만
+    var monthlySaveWon=save*12;
+    var saveYears = monthlySaveWon>0 ? gap/monthlySaveWon : Infinity;
+    if(gap<=0){ $('saveYears').textContent='0'; $('saveDesc').innerHTML='이미 국민연금만으로 목표가 채워져요. 여유 있는 출발이에요!'; }
+    else if(!isFinite(saveYears)){ $('saveYears').textContent='—'; $('saveDesc').innerHTML='월 저축액을 입력하면 계산돼요.'; }
+    else {
+      $('saveYears').textContent=Math.round(saveYears*10)/10;
+      var late = saveYears>remain;
+      $('saveDesc').innerHTML='지금처럼 월 '+comma(save)+'만원을 <b>모으기만</b> 하면 GAP까지 '+
+        (late?'<span class="warn">'+Math.round(saveYears)+'년 — 목표('+remain+'년)보다 한참 늦어요</span>':'약 '+(Math.round(saveYears*10)/10)+'년');
+    }
+
+    // 복리: 남은 기간 동안 매달 얼마 넣어야 gap 달성
+    var i=ret/100/12, n=remain*12;
+    var pmtMan;
+    if(n<=0){ pmtMan=Infinity; }
+    else if(i===0){ pmtMan = gap/n; }
+    else { pmtMan = gap * i / (Math.pow(1+i,n)-1); }
+    // 지금 저축액을 그대로 굴리면 도달하는 미래가치
+    var fvNow = (i===0? save*n : save*(Math.pow(1+i,n)-1)/i);
+    var reachPct = gap>0 ? fvNow/gap*100 : 100;
+
+    if(gap<=0){ $('invMonthly').textContent='0'; $('invDesc').innerHTML='추가로 만들 GAP이 없어요.'; }
+    else if(!isFinite(pmtMan)){ $('invMonthly').textContent='—'; $('invDesc').innerHTML='목표 나이를 현재보다 크게 잡아주세요.'; }
+    else {
+      $('invMonthly').textContent=comma(pmtMan);
+      var enough = save>=pmtMan;
+      $('invDesc').innerHTML='남은 '+remain+'년 · 수익률 '+ret+'%로 굴리면 매달 <b>'+comma(pmtMan)+'만원</b>이면 GAP 달성. '+
+        (enough?'<span class="ok">지금 저축액('+comma(save)+'만)으로 충분해요</span>':'지금 저축('+comma(save)+'만)으론 목표의 <b>'+Math.round(reachPct)+'%</b>');
+    }
+    $('pathInv').classList.toggle('hi', true);
+
+    // takeaway
+    var tk;
+    if(gap<=0){ tk='국민연금만으로도 목표가 채워지는 든든한 상태예요. 남는 여력은 <b>더 빨리 자유로워지는</b> 데 쓰면 돼요.'; }
+    else if(!isFinite(saveYears)){ tk='월 저축·투자 가능액을 넣으면, 저축만 할 때와 복리로 굴릴 때가 얼마나 갈리는지 바로 보여요.'; }
+    else {
+      var yrTxt = isFinite(saveYears)?Math.round(saveYears)+'년':'평생';
+      tk='저축만 하면 <b>'+yrTxt+'</b>, 복리 '+ret+'%로는 매달 <b>'+comma(pmtMan)+'만원</b>이면 돼요. 같은 목표인데 <b>담는 그릇</b>만 달라도 부담이 이만큼 줄어요.';
+    }
+    $('takeaway').innerHTML=tk;
+
+    // range fill
+    var rp=(ret/12*100);$('ret').style.setProperty('--pct',rp+'%');
+    $('retVal').textContent=ret;
+
+    save_ls();
+  }
+
+  function save_ls(){ try{ var o={};ids.forEach(function(id){o[id]=$(id).type==='checkbox'?$(id).checked:$(id).value;});localStorage.setItem('eoksan',JSON.stringify(o)); }catch(e){} }
+  function load_ls(){ try{ var o=JSON.parse(localStorage.getItem('eoksan')||'null'); if(o)ids.forEach(function(id){ if(o[id]!=null){ if($(id).type==='checkbox')$(id).checked=o[id]; else $(id).value=o[id]; } }); }catch(e){} }
+
+  load_ls();
+  ids.forEach(function(id){ $(id).addEventListener('input',calc); $(id).addEventListener('change',calc); });
+  calc();
+})();
+</script>
