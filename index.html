@@ -195,6 +195,8 @@
   td{font-weight:600;color:var(--ink2)} tr:last-child td{border-bottom:0}
   td.nm{text-align:left;font-weight:800;color:var(--ink);white-space:nowrap}
   .mk{font-size:15px;font-weight:900} .mk.y{color:var(--green)} .mk.n{color:#CBD5E1}
+  .wd{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-left:4px;vertical-align:middle}
+  .mlegend{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:11px}
   .pill{font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:100px;white-space:nowrap}
   .pill.ok{background:var(--green-s);color:var(--green2)} .pill.late{background:var(--amber-s);color:#B4780A} .pill.risk{background:var(--red-s);color:var(--red)}
   .mini{height:7px;background:var(--line2);border-radius:100px;overflow:hidden;width:64px;margin:0 auto}
@@ -704,6 +706,7 @@
           <tbody id="mBody"></tbody>
         </table>
       </div>
+      <div class="mlegend">✓ 과제제출 · ✓✓ 피드백완료 · <span class="wd" style="vertical-align:baseline"></span> 강의 수강완료 (90%+)</div>
     </div>
 
     <div class="panel">
@@ -808,11 +811,44 @@
     if(/\.mp4($|\?)/i.test(url))return '<div class="vodwrap"><video src="'+url+'" controls playsinline></video></div>';
     return '<div class="vodwrap"><iframe src="'+url+'" allowfullscreen></iframe></div>';
   }
+  function ytId(url){ var m=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/); return m?m[1]:''; }
+  // YouTube IFrame API 로드
+  var ytReady=false, ytQueue=[];
+  window.onYouTubeIframeAPIReady=function(){ ytReady=true; ytQueue.forEach(function(f){f();}); ytQueue=[]; };
+  (function(){ var s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; (document.head||document.body).appendChild(s); })();
+  function whenYT(cb){ if(ytReady&&window.YT&&window.YT.Player)cb(); else ytQueue.push(cb); }
+  var ytPlayers={};
+  function recordView(week,pct){
+    if(!window.__me||!window.SUPA_URL)return;
+    fetch(window.SUPA_URL+'/rest/v1/lecture_views?on_conflict=kakao_id,week',{method:'POST',
+      headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates'},
+      body:JSON.stringify({kakao_id:window.__me.id, week:week, pct:pct, completed:pct>=90, updated_at:new Date().toISOString()})
+    }).then(function(r){ if(r.ok && pct>=90)toast('수강 완료로 기록됐어요 ✓'); }).catch(function(){});
+  }
+  function startVodPoll(wi, box){
+    if(box.__t)clearInterval(box.__t); box.__done=false; box.__max=0;
+    box.__t=setInterval(function(){
+      var p=ytPlayers[wi]; if(!p||!p.getDuration)return;
+      var dur=p.getDuration()||0, cur=p.getCurrentTime()||0;
+      if(dur>0){ var pct=Math.min(100,Math.round(cur/dur*100));
+        if(pct>box.__max)box.__max=pct;
+        if(box.__max>=90 && !box.__done){ box.__done=true; recordView(wi, box.__max); clearInterval(box.__t); box.__t=null; }
+      }
+    },5000);
+  }
   function playVod(wi){
     var w=weeks[wi], box=$('vodbox'+wi); if(!box)return;
-    if(box.innerHTML){box.innerHTML='';return;}
+    if(box.innerHTML){ box.innerHTML=''; if(box.__t){clearInterval(box.__t);box.__t=null;} if(ytPlayers[wi]){try{ytPlayers[wi].destroy();}catch(e){} ytPlayers[wi]=null;} return; }
     if(!w.vod){ toast('영상은 강의 오픈일에 열려요'); return; }
-    box.innerHTML=embedHtml(w.vod);
+    var id=ytId(w.vod);
+    if(id){
+      box.innerHTML='<div class="vodwrap"><div id="ytp'+wi+'"></div></div>';
+      whenYT(function(){
+        try{ ytPlayers[wi]=new YT.Player('ytp'+wi,{ videoId:id, playerVars:{rel:0,playsinline:1,modestbranding:1},
+          events:{ onReady:function(){ startVodPoll(wi, box); } } });
+        }catch(e){ box.innerHTML=embedHtml(w.vod); }
+      });
+    } else { box.innerHTML=embedHtml(w.vod); }
   }
 
   /* ===== 과제 게시판 / 제출 (Supabase) ===== */
@@ -970,7 +1006,7 @@
     var list=members.filter(function(m){return (curF==='all'||m.st===curF)&&(!curQ||m.nm.indexOf(curQ)>-1);});
     mBody.innerHTML=list.length?list.map(function(m){
       var done=m.w.filter(function(x){return x>0;}).length,pct=Math.round(done/4*100);
-      return '<tr'+(m.removed?' style="opacity:.45"':'')+'><td class="nm">'+m.nm+'</td>'+m.w.map(function(v){return '<td>'+mark(v)+'</td>';}).join('')+
+      return '<tr'+(m.removed?' style="opacity:.45"':'')+'><td class="nm">'+m.nm+'</td>'+m.w.map(function(v,i){return '<td>'+mark(v)+(m.wl&&m.wl[i]?'<span class="wd" title="강의 수강완료 90%+"></span>':'')+'</td>';}).join('')+
         '<td><div class="mini"><i style="width:'+pct+'%"></i></div><div style="font-size:10.5px;margin-top:3px;color:var(--muted)">'+pct+'%</div></td>'+
         '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td>'+m.act+'</td>'+
         '<td><button class="dbtn" data-kid="'+m.kid+'" data-nm="'+m.nm+'">상세</button></td></tr>';
@@ -991,16 +1027,19 @@
     var H={apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY};
     Promise.all([
       fetch(window.SUPA_URL+'/rest/v1/members?select=nickname,kakao_id,joined_at&order=joined_at.desc',{headers:H}).then(function(r){return r.json();}),
-      fetch(window.SUPA_URL+'/rest/v1/submissions?select=kakao_id,week,status',{headers:H}).then(function(r){return r.json();})
+      fetch(window.SUPA_URL+'/rest/v1/submissions?select=kakao_id,week,status',{headers:H}).then(function(r){return r.json();}),
+      fetch(window.SUPA_URL+'/rest/v1/lecture_views?select=kakao_id,week,completed',{headers:H}).then(function(r){return r.json();}).catch(function(){return [];})
     ]).then(function(res){
-      var rows=res[0], subs=res[1];
+      var rows=res[0], subs=res[1], views=res[2];
       if(!Array.isArray(rows))return;
       var byId={}; if(Array.isArray(subs))subs.forEach(function(s){ if(s.status==='제출'||s.status==='피드백완료'){ (byId[s.kakao_id]=byId[s.kakao_id]||{})[s.week]=(s.status==='피드백완료'?2:1); } });
+      var vById={}; if(Array.isArray(views))views.forEach(function(v){ if(v.completed){ (vById[v.kakao_id]=vById[v.kakao_id]||{})[v.week]=1; } });
       members=rows.map(function(r){
-        var sub=byId[r.kakao_id]||{};
+        var sub=byId[r.kakao_id]||{}, vw=vById[r.kakao_id]||{};
         var w=[sub[0]||0,sub[1]||0,sub[2]||0,sub[3]||0,sub[4]||0];
+        var wl=[vw[0]||0,vw[1]||0,vw[2]||0,vw[3]||0,vw[4]||0];
         var cnt=w.filter(function(x){return x>0;}).length;
-        return {nm:r.nickname||'(이름없음)', kid:r.kakao_id, w:w, st:(cnt===0?'risk':'ok'), act:fmtDate(r.joined_at)};
+        return {nm:r.nickname||'(이름없음)', kid:r.kakao_id, w:w, wl:wl, st:(cnt===0?'risk':'ok'), act:fmtDate(r.joined_at)};
       });
       paintMembers();
     }).catch(function(){});
@@ -1017,7 +1056,7 @@
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function openMemberDetail(kid, nm){
     curKid=kid;
-    var m=members.filter(function(x){return x.kid===kid;})[0]||{nm:nm,w:[0,0,0,0,0]};
+    var m=members.filter(function(x){return x.kid===kid;})[0]||{nm:nm,w:[0,0,0,0,0],wl:[0,0,0,0,0]};
     var pct=Math.round(m.w.filter(function(x){return x>0;}).length/5*100);
     $('mdHead').innerHTML='<div class="mdprofile"><div class="mdav">'+esc((nm||'?').charAt(0))+'</div>'+
       '<div class="mdpi"><h2>'+esc(nm)+'</h2><div class="mdmeta">가입 '+esc(m.act||'—')+' · 진도 '+pct+'% · <span class="pill '+m.st+'">'+stLabel[m.st]+'</span></div></div>'+
