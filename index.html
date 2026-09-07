@@ -107,6 +107,13 @@
   .vodbox{margin-top:12px}
   .vodwrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000}
   .vodwrap iframe,.vodwrap video{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+  .vprog{display:flex;align-items:center;gap:12px;margin-top:11px}
+  .vpbar{flex:1;height:8px;background:var(--line2);border-radius:100px;overflow:hidden}
+  .vpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#34D399,var(--green));border-radius:100px;transition:width .5s}
+  .vptxt{font-size:12.5px;font-weight:700;color:var(--ink2);white-space:nowrap}
+  .vptxt b{color:var(--green)}
+  .watchnote{background:var(--amber-s);border:1px solid #F0DFA8;border-radius:12px;padding:13px 16px;font-size:13px;color:#8A5E08;font-weight:600;line-height:1.55;margin-bottom:14px}
+  .watchnote b{font-weight:800}
   /* 운영방식 STEP */
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   @media(max-width:640px){.steps{grid-template-columns:1fr 1fr}}
@@ -606,6 +613,7 @@
       <div class="shead">
         <div><div class="sec-lbl">Curriculum</div><div class="sec-h">강의실</div><div class="sec-s">매주 월요일 새 강의가 열려요</div></div>
       </div>
+      <div class="watchnote">⚠️ <b>강의는 "통으로" 봐야 의미가 있어요.</b> 앞부분 개념이 뒷부분 전략의 열쇠라, 끊어 보거나 배속으로 보면 연결이 끊겨요. <b>끝까지(90%) 보신 분만</b> 🎁 보너스 산업편이 열립니다.</div>
       <div class="lecs" id="lecs"></div>
     </section>
 
@@ -832,15 +840,27 @@
     }).then(function(r){ if(r.ok && pct>=90)toast('수강 완료로 기록됐어요 ✓'); }).catch(function(){});
   }
   function startVodPoll(wi, box){
-    if(box.__t)clearInterval(box.__t); box.__done=false; box.__max=0;
+    if(box.__t)clearInterval(box.__t);
+    box.__done=false; box.__seen={}; box.__cnt=0; box.__last=-1;
+    var bar=document.getElementById('vpbar'+wi), txt=document.getElementById('vptxt'+wi);
     box.__t=setInterval(function(){
-      var p=ytPlayers[wi]; if(!p||!p.getDuration)return;
-      var dur=p.getDuration()||0, cur=p.getCurrentTime()||0;
-      if(dur>0){ var pct=Math.min(100,Math.round(cur/dur*100));
-        if(pct>box.__max)box.__max=pct;
-        if(box.__max>=90 && !box.__done){ box.__done=true; recordView(wi, box.__max); clearInterval(box.__t); box.__t=null; }
+      var p=ytPlayers[wi]; if(!p||!p.getCurrentTime)return;
+      var dur=(p.getDuration&&p.getDuration())||0, cur=p.getCurrentTime()||0;
+      var state=p.getPlayerState?p.getPlayerState():-1;   // 1=재생중
+      var rate=p.getPlaybackRate?p.getPlaybackRate():1;
+      // 실제 순차 시청만 카운트 (건너뛰기·2배속 제외)
+      if(dur>0 && state===1 && rate<=1.5 && box.__last>=0){
+        var d=cur-box.__last;
+        if(d>0 && d<3){ for(var s=Math.floor(box.__last); s<=Math.floor(cur); s++){ if(!box.__seen[s]){box.__seen[s]=1;box.__cnt++;} } }
       }
-    },5000);
+      box.__last=cur;
+      if(dur>0){
+        var pct=Math.min(100,Math.round(box.__cnt/dur*100));
+        if(bar)bar.style.width=pct+'%';
+        if(txt)txt.innerHTML=(box.__done||pct>=90)?'✅ 완주 완료! 보너스 조건을 채웠어요':'현재 <b>'+pct+'%</b> 시청 · 90%까지 봐야 완주돼요 (건너뛰기·2배속 X)';
+        if(pct>=90 && !box.__done){ box.__done=true; recordView(wi,90); }
+      }
+    },1000);
   }
   function playVod(wi){
     var w=weeks[wi], box=$('vodbox'+wi); if(!box)return;
@@ -848,7 +868,8 @@
     if(!w.vod){ toast('영상은 강의 오픈일에 열려요'); return; }
     var id=ytId(w.vod);
     if(id){
-      box.innerHTML='<div class="vodwrap"><div id="ytp'+wi+'"></div></div>';
+      box.innerHTML='<div class="vodwrap"><div id="ytp'+wi+'"></div></div>'+
+        '<div class="vprog"><div class="vpbar"><i id="vpbar'+wi+'"></i></div><span class="vptxt" id="vptxt'+wi+'">▶ 재생하면 시청률이 기록돼요 · 통으로 봐야 완주!</span></div>';
       whenYT(function(){
         try{ ytPlayers[wi]=new YT.Player('ytp'+wi,{ videoId:id, playerVars:{rel:0,playsinline:1,modestbranding:1},
           events:{ onReady:function(){ startVodPoll(wi, box); } } });
