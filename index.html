@@ -278,6 +278,23 @@
   /* 관리자 상세 */
   .dbtn{font-size:12px;font-weight:800;background:var(--bg);border:1px solid var(--line);color:var(--ink2);border-radius:8px;padding:6px 12px}
   .dbtn:hover{border-color:var(--green);color:var(--green)}
+  .nmrow{display:flex;align-items:center;gap:9px}
+  .avatar{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+  .av0{background:#16A34A}.av1{background:#2563EB}.av2{background:#D97706}.av3{background:#DB2777}.av4{background:#7C3AED}.av5{background:#0891B2}
+  .cbadge{display:inline-block;font-size:10px;font-weight:800;color:var(--green2);background:var(--green-s);border-radius:100px;padding:1px 7px;margin-left:2px}
+  .coachsel{font-size:12px;font-weight:700;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--card);max-width:130px}
+  .coachsel.unassigned{color:var(--muted);background:var(--bg)}
+  .last-active{font-size:12px;color:var(--ink2);font-weight:600}
+  .coachlist{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  .coach-empty{font-size:13px;color:var(--muted);font-weight:600;padding:4px 0}
+  .coach-row{display:flex;align-items:center;gap:10px;background:var(--green-s);border:1px solid #CDEBD6;border-radius:12px;padding:9px 13px}
+  .coach-row .cnm{font-weight:800;font-size:13.5px;color:var(--ink)}
+  .coach-row .ccnt{font-size:12px;font-weight:700;color:var(--green2)}
+  .coach-row .unmake{font-size:11px;font-weight:700;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
+  .coachmake{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .coachmake select{font-size:13px;font-weight:600;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--card);min-width:180px}
+  .mkbtn{font-size:13px;font-weight:800;background:var(--green);color:#fff;border:0;border-radius:10px;padding:10px 18px}
+  .mkbtn:hover{background:var(--green2)}
   #memberDetailView{padding-top:22px}
   .mdprofile{display:flex;align-items:center;gap:15px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);margin-bottom:16px}
   .mdav{width:56px;height:56px;flex:none;border-radius:50%;background:var(--green-s);color:var(--green2);display:grid;place-items:center;font-size:22px;font-weight:850}
@@ -700,17 +717,25 @@
     </div>
 
     <div class="panel">
+      <div class="ph"><h3>🎯 세일즈 코치 관리</h3><span class="note">수강생을 코치로 임명하고, 명단에서 담당을 배정하세요</span></div>
+      <div id="coachList" class="coachlist"></div>
+      <div class="coachmake"><select id="coachCand"></select><button id="btnMakeCoach" class="mkbtn">코치로 임명</button></div>
+    </div>
+
+    <div class="panel">
       <div class="ph"><h3>👥 수강생 명단</h3><span class="note" id="cntNote">표시 0명 / 전체 0명</span></div>
       <div class="fbar">
         <button class="fbtn on" data-f="all">전체 <b id="cAll">0</b></button>
         <button class="fbtn" data-f="ok">정상 <b id="cOk">0</b></button>
         <button class="fbtn" data-f="late">늦어짐 <b id="cLate">0</b></button>
         <button class="fbtn" data-f="risk">위험 <b id="cRisk">0</b></button>
+        <button class="fbtn" data-f="unassigned">미배정 <b id="cUnassigned">0</b></button>
+        <button class="fbtn" id="myOnlyBtn" style="display:none">🙋 내 담당만</button>
         <input class="search" id="search" placeholder="이름 검색">
       </div>
       <div class="tbl">
         <table>
-          <thead><tr><th style="text-align:left">수강생</th><th>OT</th><th>1주</th><th>2주</th><th>3주</th><th>4주</th><th>진도</th><th>상태</th><th>가입일</th><th></th></tr></thead>
+          <thead><tr><th style="text-align:left">수강생</th><th>담당 코치</th><th>OT</th><th>1주</th><th>2주</th><th>3주</th><th>4주</th><th>진도</th><th>상태</th><th>최근 접속</th><th></th></tr></thead>
           <tbody id="mBody"></tbody>
         </table>
       </div>
@@ -1021,7 +1046,34 @@
 
   /* ===== 관리자 명단 (Supabase) ===== */
   var members=[];
+  var coaches=[], myOnly=false;
   var stLabel={ok:'정상',late:'늦어짐',risk:'위험'};
+  function relativeTime(s){ if(!s)return '—'; try{var d=new Date(s),diff=(Date.now()-d.getTime())/1000; if(diff<0)return '방금'; if(diff<60)return '방금'; if(diff<3600)return Math.floor(diff/60)+'분 전'; if(diff<86400)return Math.floor(diff/3600)+'시간 전'; if(diff<2592000)return Math.floor(diff/86400)+'일 전'; return (d.getMonth()+1)+'/'+d.getDate();}catch(e){return '—';} }
+  function avatarClass(id){ var s=String(id||''),h=0,i; for(i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0; return 'av'+(h%6); }
+  function assignCoach(kid,coachId){
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(kid),{method:'PATCH',headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({coach_id:coachId||null})})
+     .then(function(r){ if(r.ok){toast(coachId?'담당 코치 배정됐어요':'미배정으로 변경했어요');loadMembers();} else toast('실패 — 코치 컬럼 SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
+  }
+  function setCoachRole(kid,role){
+    var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'};
+    var done=function(){ loadMembers(); };
+    if(role==='student'){ // 코치 해제 → 담당 수강생 미배정 처리
+      fetch(window.SUPA_URL+'/rest/v1/members?coach_id=eq.'+encodeURIComponent(kid),{method:'PATCH',headers:H,body:JSON.stringify({coach_id:null})}).catch(function(){});
+    }
+    fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(kid),{method:'PATCH',headers:H,body:JSON.stringify({role:role})})
+     .then(function(r){ if(r.ok){toast(role==='coach'?'코치로 임명했어요':'코치 해제했어요');done();} else toast('실패 — SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
+  }
+  function coachSelHtml(m){
+    var opts='<option value="">— 미배정 —</option>'+coaches.filter(function(c){return c.id!==m.kid;}).map(function(c){return '<option value="'+esc(c.id)+'"'+(m.coach===c.id?' selected':'')+'>'+esc(c.nm)+'</option>';}).join('');
+    return '<select class="coachsel'+(m.coach?'':' unassigned')+'" data-assign="'+esc(m.kid)+'">'+opts+'</select>';
+  }
+  function renderCoachPanel(){
+    var list=$('coachList'), cand=$('coachCand'); if(!list)return;
+    if(!coaches.length){ list.innerHTML='<div class="coach-empty">아직 코치가 없어요. 아래에서 수강생을 코치로 임명하세요.</div>'; }
+    else { list.innerHTML=coaches.map(function(c){ var n=members.filter(function(m){return m.coach===c.id;}).length; return '<div class="coach-row"><span class="cnm">'+esc(c.nm)+'</span><span class="ccnt">담당 '+n+'명</span><button class="unmake" data-unmake="'+esc(c.id)+'">코치 해제</button></div>'; }).join(''); }
+    if(cand){ cand.innerHTML='<option value="">수강생 선택…</option>'+members.filter(function(m){return m.role!=='coach'&&!m.removed;}).map(function(m){return '<option value="'+esc(m.kid)+'">'+esc(m.nm)+'</option>';}).join(''); }
+    list.querySelectorAll('[data-unmake]').forEach(function(b){b.addEventListener('click',function(){ if(confirm('코치를 해제할까요? 담당 수강생은 미배정 상태가 됩니다.'))setCoachRole(b.dataset.unmake,'student'); });});
+  }
   function mark(v){return v===2?'<span class="mk y" title="피드백완료" style="color:var(--blue)">✓✓</span>':(v?'<span class="mk y">✓</span>':'<span class="mk n">·</span>');}
   [{w:'OT'},{w:'1주차'},{w:'2주차'},{w:'3주차'},{w:'4주차'}].forEach(function(r){
     var d=document.createElement('div');d.className='wrate';
@@ -1030,14 +1082,23 @@
   });
   var mBody=$('mBody'),curF='all',curQ='';
   function renderM(){
-    var list=members.filter(function(m){return (curF==='all'||m.st===curF)&&(!curQ||m.nm.indexOf(curQ)>-1);});
+    var list=members.filter(function(m){
+      if(myOnly && window.__me && m.coach!==String(window.__me.id))return false;
+      if(!(curF==='all'||(curF==='unassigned'?!m.coach:m.st===curF)))return false;
+      if(curQ && m.nm.indexOf(curQ)<0)return false;
+      return true;
+    });
     mBody.innerHTML=list.length?list.map(function(m){
       var done=m.w.filter(function(x){return x>0;}).length,pct=Math.round(done/4*100);
-      return '<tr'+(m.removed?' style="opacity:.45"':'')+'><td class="nm">'+m.nm+'</td>'+m.w.map(function(v,i){return '<td>'+mark(v)+(m.wl&&m.wl[i]?'<span class="wd" title="강의 수강완료 90%+"></span>':'')+'</td>';}).join('')+
+      return '<tr'+(m.removed?' style="opacity:.45"':'')+'>'+
+        '<td class="nm"><div class="nmrow"><span class="avatar '+avatarClass(m.kid)+'">'+esc((m.nm||'?').charAt(0))+'</span><span class="nmtxt">'+esc(m.nm)+(m.role==='coach'?' <span class="cbadge">코치</span>':'')+'</span></div></td>'+
+        '<td>'+coachSelHtml(m)+'</td>'+
+        m.w.map(function(v,i){return '<td>'+mark(v)+(m.wl&&m.wl[i]?'<span class="wd" title="강의 수강완료 90%+"></span>':'')+'</td>';}).join('')+
         '<td><div class="mini"><i style="width:'+pct+'%"></i></div><div style="font-size:10.5px;margin-top:3px;color:var(--muted)">'+pct+'%</div></td>'+
-        '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td>'+m.act+'</td>'+
-        '<td><button class="dbtn" data-kid="'+m.kid+'" data-nm="'+m.nm+'">상세</button></td></tr>';
-    }).join('') : '<tr><td colspan="10" class="empty"><b>아직 등록된 수강생이 없어요</b>카카오로 로그인하면 여기에 자동으로 표시돼요</td></tr>';
+        '<td><span class="pill '+m.st+'">'+stLabel[m.st]+'</span></td><td><span class="last-active">'+relativeTime(m.la)+'</span></td>'+
+        '<td><button class="dbtn" data-kid="'+esc(m.kid)+'" data-nm="'+esc(m.nm)+'">상세</button></td></tr>';
+    }).join('') : '<tr><td colspan="11" class="empty"><b>조건에 맞는 수강생이 없어요</b>카카오로 로그인하면 여기에 자동으로 표시돼요</td></tr>';
+    mBody.querySelectorAll('[data-assign]').forEach(function(sel){ sel.addEventListener('change',function(){ assignCoach(sel.dataset.assign, sel.value); }); });
     $('cntNote').textContent='표시 '+list.length+'명 / 전체 '+members.length+'명';
   }
   function paintMembers(){
@@ -1046,6 +1107,7 @@
     $('cOk').textContent=members.filter(function(m){return m.st==='ok';}).length;
     $('cLate').textContent=members.filter(function(m){return m.st==='late';}).length;
     $('cRisk').textContent=members.filter(function(m){return m.st==='risk';}).length;
+    var cu=$('cUnassigned'); if(cu)cu.textContent=members.filter(function(m){return !m.coach&&m.role!=='coach';}).length;
     renderM();
   }
   function fmtDate(s){ if(!s)return '—'; try{var d=new Date(s);return (d.getMonth()+1)+'/'+d.getDate();}catch(e){return '—';} }
@@ -1053,12 +1115,16 @@
     if(!window.SUPA_URL) return;
     var H={apikey:window.SUPA_KEY, Authorization:'Bearer '+window.SUPA_KEY};
     Promise.all([
-      fetch(window.SUPA_URL+'/rest/v1/members?select=nickname,kakao_id,joined_at&order=joined_at.desc',{headers:H}).then(function(r){return r.json();}),
+      fetch(window.SUPA_URL+'/rest/v1/members?select=nickname,kakao_id,joined_at,coach_id,role,last_login_at&order=joined_at.desc',{headers:H}).then(function(r){return r.json();}),
       fetch(window.SUPA_URL+'/rest/v1/submissions?select=kakao_id,week,status',{headers:H}).then(function(r){return r.json();}),
       fetch(window.SUPA_URL+'/rest/v1/lecture_views?select=kakao_id,week,completed',{headers:H}).then(function(r){return r.json();}).catch(function(){return [];})
     ]).then(function(res){
       var rows=res[0], subs=res[1], views=res[2];
-      if(!Array.isArray(rows))return;
+      if(!Array.isArray(rows)){ // 코치 컬럼 없으면 기본 컬럼으로 재시도
+        fetch(window.SUPA_URL+'/rest/v1/members?select=nickname,kakao_id,joined_at&order=joined_at.desc',{headers:H}).then(function(r){return r.json();}).then(function(rr){ rows=rr; if(Array.isArray(rows))build(rows,subs,views); }); return;
+      }
+      build(rows,subs,views);
+      function build(rows,subs,views){
       var byId={}; if(Array.isArray(subs))subs.forEach(function(s){ if(s.status==='제출'||s.status==='피드백완료'){ (byId[s.kakao_id]=byId[s.kakao_id]||{})[s.week]=(s.status==='피드백완료'?2:1); } });
       var vById={}; if(Array.isArray(views))views.forEach(function(v){ if(v.completed){ (vById[v.kakao_id]=vById[v.kakao_id]||{})[v.week]=1; } });
       members=rows.map(function(r){
@@ -1066,16 +1132,23 @@
         var w=[sub[0]||0,sub[1]||0,sub[2]||0,sub[3]||0,sub[4]||0];
         var wl=[vw[0]||0,vw[1]||0,vw[2]||0,vw[3]||0,vw[4]||0];
         var cnt=w.filter(function(x){return x>0;}).length;
-        return {nm:r.nickname||'(이름없음)', kid:r.kakao_id, w:w, wl:wl, st:(cnt===0?'risk':'ok'), act:fmtDate(r.joined_at)};
+        return {nm:r.nickname||'(이름없음)', kid:r.kakao_id, w:w, wl:wl, coach:(r.coach_id||''), role:(r.role||'student'), la:r.last_login_at, st:(cnt===0?'risk':'ok'), act:fmtDate(r.joined_at)};
       });
+      coaches=members.filter(function(m){return m.role==='coach';}).map(function(m){return {id:m.kid, nm:m.nm};});
+      window.__isCoach=!!(window.__me && coaches.some(function(c){return c.id===String(window.__me.id);}));
+      var mob=$('myOnlyBtn'); if(mob)mob.style.display=window.__isCoach?'':'none';
+      renderCoachPanel();
       paintMembers();
+      }
     }).catch(function(){});
   }
   window.__refreshRoster=loadMembers;
   paintMembers();
-  document.querySelectorAll('.fbtn').forEach(function(b){b.addEventListener('click',function(){
-    document.querySelectorAll('.fbtn').forEach(function(x){x.classList.remove('on');});
+  document.querySelectorAll('.fbtn[data-f]').forEach(function(b){b.addEventListener('click',function(){
+    document.querySelectorAll('.fbtn[data-f]').forEach(function(x){x.classList.remove('on');});
     b.classList.add('on');curF=b.dataset.f;renderM();});});
+  var _mob=$('myOnlyBtn'); if(_mob)_mob.addEventListener('click',function(){ myOnly=!myOnly; _mob.classList.toggle('on',myOnly); renderM(); });
+  var _bmc=$('btnMakeCoach'); if(_bmc)_bmc.addEventListener('click',function(){ var c=$('coachCand'); if(!c||!c.value){toast('수강생을 먼저 선택하세요');return;} setCoachRole(c.value,'coach'); });
   $('search').addEventListener('input',function(e){curQ=e.target.value.trim();renderM();});
 
   /* ===== 수강생 상세 (제출물 열람) ===== */
@@ -1277,6 +1350,7 @@
         var nick=(res.kakao_account && res.kakao_account.profile && res.kakao_account.profile.nickname)||(res.properties && res.properties.nickname)||'';
         var myId=String(res.id);
         saveMember(myId, nick);
+        try{ fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(String(myId)),{method:'PATCH',headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({last_login_at:new Date().toISOString()})}).catch(function(){}); }catch(e){}
         window.__me={id:String(myId), nick:nick};
         window.__isAdmin=checkAdmin(nick, myId);
         if(window.__isAdmin){ if(window.__refreshRoster) window.__refreshRoster(); }
