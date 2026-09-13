@@ -286,6 +286,7 @@
   .av0{background:#16A34A}.av1{background:#2563EB}.av2{background:#D97706}.av3{background:#DB2777}.av4{background:#7C3AED}.av5{background:#0891B2}
   .cbadge{display:inline-block;font-size:10px;font-weight:800;color:var(--green2);background:var(--green-s);border-radius:100px;padding:1px 7px;margin-left:2px}
   .coachsel{font-size:12px;font-weight:700;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--card);max-width:130px}
+  .coachro{font-size:12.5px;font-weight:700;color:var(--ink2)}
   .coachsel.unassigned{color:var(--muted);background:var(--bg)}
   .last-active{font-size:12px;color:var(--ink2);font-weight:600}
   .coachlist{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
@@ -743,25 +744,25 @@
 <div id="adminView" class="hide">
   <div class="wrap wide">
     <div class="ahead">
-      <span class="tag">ADMIN</span>
-      <h1>관리자 대시보드</h1>
-      <div class="sub">티끌모아 잘살궁리 1기 · 실시간 수강생 현황</div>
+      <span class="tag" id="adTag">ADMIN</span>
+      <h1 id="adTitle">관리자 대시보드</h1>
+      <div class="sub" id="adSub">티끌모아 잘살궁리 1기 · 실시간 수강생 현황</div>
       <div class="kpis">
-        <div class="kpi"><div class="k">등록 수강생</div><div class="v" id="kpiCount">0<small>명</small></div><div class="d">로그인 기준</div></div>
+        <div class="kpi"><div class="k" id="kpiCountLbl">등록 수강생</div><div class="v" id="kpiCount">0<small>명</small></div><div class="d">로그인 기준</div></div>
         <div class="kpi"><div class="k">1주차 제출률</div><div class="v">—</div><div class="d" style="color:var(--muted)">8/31 오픈</div></div>
         <div class="kpi"><div class="k">완주 진행률</div><div class="v">—</div><div class="d" style="color:var(--muted)">4주 과정</div></div>
         <div class="kpi"><div class="k">챌린지 시작</div><div class="v" style="font-size:20px">8/31</div><div class="d">월요일</div></div>
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="coachMgmtPanel">
       <div class="ph"><h3>🎯 세일즈 코치 관리</h3><span class="note">수강생을 코치로 임명하고, 명단에서 담당을 배정하세요</span></div>
       <div id="coachList" class="coachlist"></div>
       <div class="coachmake"><select id="coachCand"></select><button id="btnMakeCoach" class="mkbtn">코치로 임명</button></div>
     </div>
 
     <div class="panel">
-      <div class="ph"><h3>👥 수강생 명단</h3><span class="note" id="cntNote">표시 0명 / 전체 0명</span></div>
+      <div class="ph"><h3 id="rosterTitle">👥 수강생 명단</h3><span class="note" id="cntNote">표시 0명 / 전체 0명</span></div>
       <div class="fbar">
         <button class="fbtn on" data-f="all">전체 <b id="cAll">0</b></button>
         <button class="fbtn" data-f="ok">정상 <b id="cOk">0</b></button>
@@ -1102,6 +1103,7 @@
      .then(function(r){ if(r.ok){toast(role==='coach'?'코치로 임명했어요':'코치 해제했어요');done();} else toast('실패 — SQL 실행했나요?'); }).catch(function(){toast('연결 오류');});
   }
   function coachSelHtml(m){
+    if(window.__isCoachOnly){ var cn=(coaches.filter(function(c){return c.id===m.coach;})[0]||{}).nm||'—'; return '<span class="coachro">'+esc(cn)+'</span>'; }
     var opts='<option value="">— 미배정 —</option>'+coaches.filter(function(c){return c.id!==m.kid;}).map(function(c){return '<option value="'+esc(c.id)+'"'+(m.coach===c.id?' selected':'')+'>'+esc(c.nm)+'</option>';}).join('');
     return '<select class="coachsel'+(m.coach?'':' unassigned')+'" data-assign="'+esc(m.kid)+'">'+opts+'</select>';
   }
@@ -1121,7 +1123,7 @@
   var mBody=$('mBody'),curF='all',curQ='';
   function renderM(){
     var list=members.filter(function(m){
-      if(myOnly && window.__me && m.coach!==String(window.__me.id))return false;
+      if((myOnly||window.__isCoachOnly) && window.__me && m.coach!==String(window.__me.id))return false;
       if(!(curF==='all'||(curF==='unassigned'?!m.coach:m.st===curF)))return false;
       if(curQ && m.nm.indexOf(curQ)<0)return false;
       return true;
@@ -1137,17 +1139,33 @@
         '<td><button class="dbtn" data-kid="'+esc(m.kid)+'" data-nm="'+esc(m.nm)+'">상세</button></td></tr>';
     }).join('') : '<tr><td colspan="11" class="empty"><b>조건에 맞는 수강생이 없어요</b>카카오로 로그인하면 여기에 자동으로 표시돼요</td></tr>';
     mBody.querySelectorAll('[data-assign]').forEach(function(sel){ sel.addEventListener('change',function(){ assignCoach(sel.dataset.assign, sel.value); }); });
-    $('cntNote').textContent='표시 '+list.length+'명 / 전체 '+members.length+'명';
+    $('cntNote').textContent='표시 '+list.length+'명 / 전체 '+scopedMembers().length+'명';
+  }
+  function scopedMembers(){
+    if(window.__isCoachOnly && window.__me){ var mid=String(window.__me.id); return members.filter(function(m){return m.coach===mid;}); }
+    return members;
   }
   function paintMembers(){
-    var kc=$('kpiCount');if(kc)kc.innerHTML=members.length+'<small>명</small>';
-    $('cAll').textContent=members.length;
-    $('cOk').textContent=members.filter(function(m){return m.st==='ok';}).length;
-    $('cLate').textContent=members.filter(function(m){return m.st==='late';}).length;
-    $('cRisk').textContent=members.filter(function(m){return m.st==='risk';}).length;
-    var cu=$('cUnassigned'); if(cu)cu.textContent=members.filter(function(m){return !m.coach&&m.role!=='coach';}).length;
+    var sc=scopedMembers();
+    var kc=$('kpiCount');if(kc)kc.innerHTML=sc.length+'<small>명</small>';
+    $('cAll').textContent=sc.length;
+    $('cOk').textContent=sc.filter(function(m){return m.st==='ok';}).length;
+    $('cLate').textContent=sc.filter(function(m){return m.st==='late';}).length;
+    $('cRisk').textContent=sc.filter(function(m){return m.st==='risk';}).length;
+    var cu=$('cUnassigned'); if(cu)cu.textContent=sc.filter(function(m){return !m.coach&&m.role!=='coach';}).length;
     renderM();
   }
+  function applyCoachScope(){
+    var mp=$('coachMgmtPanel'); if(mp)mp.style.display='none';
+    var mob=$('myOnlyBtn'); if(mob)mob.style.display='none';
+    var ua=document.querySelector('.fbtn[data-f="unassigned"]'); if(ua)ua.style.display='none';
+    var t=$('adTitle'); if(t)t.textContent='코치 대시보드';
+    var tag=$('adTag'); if(tag)tag.textContent='COACH';
+    var sub=$('adSub'); if(sub)sub.textContent='내가 담당하는 수강생 현황';
+    var kl=$('kpiCountLbl'); if(kl)kl.textContent='내 담당 수강생';
+    var rt=$('rosterTitle'); if(rt)rt.textContent='👥 내 담당 수강생';
+  }
+  window.__applyCoachScope=applyCoachScope;
   function fmtDate(s){ if(!s)return '—'; try{var d=new Date(s);return (d.getMonth()+1)+'/'+d.getDate();}catch(e){return '—';} }
   function loadMembers(){
     if(!window.SUPA_URL) return;
@@ -1174,7 +1192,8 @@
       });
       coaches=members.filter(function(m){return m.role==='coach';}).map(function(m){return {id:m.kid, nm:m.nm};});
       window.__isCoach=!!(window.__me && coaches.some(function(c){return c.id===String(window.__me.id);}));
-      var mob=$('myOnlyBtn'); if(mob)mob.style.display=window.__isCoach?'':'none';
+      var mob=$('myOnlyBtn'); if(mob)mob.style.display=(window.__isCoach && !window.__isCoachOnly)?'':'none';
+      if(window.__isCoachOnly)applyCoachScope();
       renderCoachPanel();
       paintMembers();
       }
@@ -1358,9 +1377,12 @@
   "use strict";
   var BUILD_VERSION = "v31-ot-notion-0820";
   var KAKAO_JS_KEY = "cf1a2a0ea39c8d93a2dcd2280c47cf58";
-  var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리", "박효은", "mz_invest_ssam", "진소희", "김혜진"];
+  var ADMIN_NICKS = ["김영찬", "금융쌤", "너궁리", "궁리", "박효은", "mz_invest_ssam"];
   var ADMIN_IDS   = [];
+  var COACH_NICKS = ["진소희", "김혜진"];
+  var COACH_IDS   = [];
   function checkAdmin(nick, id){ nick=nick||""; for(var i=0;i<ADMIN_NICKS.length;i++){ if(nick.indexOf(ADMIN_NICKS[i])>-1) return true; } return ADMIN_IDS.indexOf(id)>-1; }
+  function checkCoach(nick, id){ nick=nick||""; for(var i=0;i<COACH_NICKS.length;i++){ if(nick.indexOf(COACH_NICKS[i])>-1) return true; } return COACH_IDS.indexOf(id)>-1; }
 
   try { if(!Kakao.isInitialized()) Kakao.init(KAKAO_JS_KEY); } catch(e){}
 
@@ -1387,8 +1409,8 @@
   function route(nick, id){
     hide(gate);
     var navAdmin=document.getElementById('navAdmin');
-    var isAdmin=checkAdmin(nick, id);
-    if(isAdmin){ show(nav); show(navAdmin); hide(sv); show(ad); navWide(true); }
+    var isStaff=checkAdmin(nick, id)||checkCoach(nick, id);
+    if(isStaff){ show(nav); show(navAdmin); hide(sv); show(ad); navWide(true); }
     else { show(nav); hide(navAdmin); hide(ad); show(sv); navWide(false); }
   }
   function fetchMeAndRoute(){
@@ -1400,7 +1422,10 @@
         try{ fetch(window.SUPA_URL+'/rest/v1/members?kakao_id=eq.'+encodeURIComponent(String(myId)),{method:'PATCH',headers:{apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY,'Content-Type':'application/json'},body:JSON.stringify({last_login_at:new Date().toISOString()})}).catch(function(){}); }catch(e){}
         window.__me={id:String(myId), nick:nick};
         window.__isAdmin=checkAdmin(nick, myId);
-        if(window.__isAdmin){ if(window.__refreshRoster) window.__refreshRoster(); }
+        window.__isCoachOnly=!window.__isAdmin && checkCoach(nick, myId);
+        window.__isStaff=window.__isAdmin||window.__isCoachOnly;
+        if(window.__isCoachOnly){ myOnly=true; applyCoachScope(); }
+        if(window.__isStaff){ if(window.__refreshRoster) window.__refreshRoster(); }
         if(window.__loadMy) window.__loadMy();
         if(window.__renderLecs) window.__renderLecs();
         if(window.__loadTrain) window.__loadTrain();
