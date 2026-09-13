@@ -712,7 +712,7 @@
           <div class="locopts" id="prefPlace">
             <button data-place="강남"><span class="ico">🏙</span><span class="body"><span class="nm">강남 대면 트레이닝</span><span class="addr">서초대로77길 17 Block77빌딩</span></span><span class="mark">✓</span></button>
             <button data-place="성남"><span class="ico">🏢</span><span class="body"><span class="nm">성남 대면 트레이닝</span><span class="addr">황새울로214번길 8 MS프라자</span></span><span class="mark">✓</span></button>
-            <button data-place="ZOOM"><span class="ico">🤝</span><span class="body"><span class="nm">저는 너무 멀어요</span><span class="addr">금융쌤이 비대면 ZOOM으로 조율해 드려요</span></span><span class="mark">✓</span></button>
+            <button data-place="ZOOM"><span class="ico">🤝</span><span class="body"><span class="nm">저는 너무 멀어요</span><span class="addr">금융쌤이 따로 조율해 드려요</span></span><span class="mark">✓</span></button>
           </div>
           <div class="tpstatus" id="prefPlaceStatus" style="display:none"><span class="chk">✓</span> <b id="prefPlaceTxt"></b> · 일정 잡힐 때 우선 반영</div>
         </div>
@@ -798,17 +798,17 @@
       <div class="sub">수강생의 트레이닝 신청·진행 상태를 한눈에</div>
       <div class="kpis">
         <div class="kpi"><div class="k">전체</div><div class="v" id="trAll">0<small>명</small></div></div>
-        <div class="kpi"><div class="k">일정확정</div><div class="v" id="trProg" style="color:var(--green)">0</div></div>
-        <div class="kpi"><div class="k">신청완료</div><div class="v" id="trPlan" style="color:var(--amber)">0</div></div>
-        <div class="kpi"><div class="k">미신청</div><div class="v" id="trNone" style="color:var(--muted)">0</div></div>
+        <div class="kpi"><div class="k">진행 중</div><div class="v" id="trProg" style="color:var(--green)">0</div></div>
+        <div class="kpi"><div class="k">예정</div><div class="v" id="trPlan" style="color:var(--amber)">0</div></div>
+        <div class="kpi"><div class="k">미정</div><div class="v" id="trNone" style="color:var(--muted)">0</div></div>
       </div>
     </div>
     <div class="panel">
       <div class="fbar">
         <button class="tfbtn on" data-tf="all">전체</button>
-        <button class="tfbtn" data-tf="일정확정">⭕ 일정확정</button>
-        <button class="tfbtn" data-tf="신청완료">🔺 신청완료</button>
-        <button class="tfbtn" data-tf="미신청">❌ 미신청</button>
+        <button class="tfbtn" data-tf="진행 중">⭕ 진행 중</button>
+        <button class="tfbtn" data-tf="예정">🔺 예정</button>
+        <button class="tfbtn" data-tf="미정">❌ 미정</button>
         <input class="search" id="trSearch" placeholder="이름 검색">
       </div>
       <div class="tbl"><table><thead><tr><th style="text-align:left">수강생</th><th>선호 시간</th><th>선호 장소</th><th>트레이닝 상태</th></tr></thead><tbody id="trBody"></tbody></table></div>
@@ -1274,8 +1274,8 @@
 
   /* ===== 트레이닝 현황표 ===== */
   var trainees=[], trF='all', trQ='', myPref={};
-  var stMap={'일정확정':'ok','신청완료':'late','미신청':'risk'};
-  var stIcon={'일정확정':'⭕','신청완료':'🔺','미신청':'❌'};
+  var stMap={'진행 중':'ok','예정':'late','미정':'risk'};
+  var stIcon={'진행 중':'⭕','예정':'🔺','미정':'❌'};
   function prefIco(v){ if(!v)return ''; return v.indexOf('주말')>-1?'🌞':'💼'; }
   function placeIco(v){ if(!v)return ''; if(v.indexOf('강남')>-1)return '🏙'; if(v.indexOf('성남')>-1)return '🏢'; return '🤝'; }
   function loadTrain(){
@@ -1289,22 +1289,22 @@
   window.__loadTrain=loadTrain;
   function renderTrain(){
     var tb=$('trBody'); if(!tb)return;
-    var list=trainees.filter(function(m){var st=m.train_status||'미신청'; return (trF==='all'||st===trF)&&(!trQ||(m.nickname||'').indexOf(trQ)>-1);});
+    var list=trainees.filter(function(m){var st=m.train_status||'미정'; return (trF==='all'||st===trF)&&(!trQ||(m.nickname||'').indexOf(trQ)>-1);});
     tb.innerHTML=list.length?list.map(function(m){
-      var st=m.train_status||'미신청';
+      var st=m.train_status||'미정';
       var nm=m.nickname||'(이름없음)', ini=(nm.replace(/[()]/g,'').trim()||'?').charAt(0);
       var av='<span class="avatar '+avatarClass(m.kakao_id)+'">'+esc(ini)+'</span>';
       var status = window.__isAdmin
-        ? '<div class="stog">'+['미신청','신청완료','일정확정'].map(function(o){return '<button class="stb'+(st===o?' on '+stMap[o]:'')+'" data-kid="'+m.kakao_id+'" data-st="'+o+'">'+stIcon[o]+' '+o+'</button>';}).join('')+'</div>'
+        ? '<div class="stog">'+['미정','예정','진행 중'].map(function(o){return '<button class="stb'+(st===o?' on '+stMap[o]:'')+'" data-kid="'+m.kakao_id+'" data-st="'+o+'">'+stIcon[o]+' '+o+'</button>';}).join('')+'</div>'
         : '<span class="pill '+stMap[st]+'">'+stIcon[st]+' '+st+'</span>';
       return '<tr><td class="nm"><div class="nmrow">'+av+'<span class="nmtxt">'+esc(nm)+'</span></div></td>'+
         '<td>'+(m.train_pref?'<span class="tchip">'+prefIco(m.train_pref)+' '+esc(m.train_pref)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
-        '<td>'+(m.train_place?'<span class="tchip pl">'+placeIco(m.train_place)+' '+esc(m.train_place)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
+        '<td>'+(m.train_place?'<span class="tchip pl">'+placeIco(m.train_place)+' '+esc(m.train_place==='ZOOM'?'조율':m.train_place)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td>'+
         '<td>'+status+'</td></tr>';
     }).join('') : '<tr><td colspan="4" class="empty">아직 트레이닝 신청자가 없어요</td></tr>';
-    var c={'일정확정':0,'신청완료':0,'미신청':0}; trainees.forEach(function(m){c[m.train_status||'미신청']++;});
-    $('trAll').innerHTML=trainees.length+'<small>명</small>'; $('trProg').textContent=c['일정확정']; $('trPlan').textContent=c['신청완료']; $('trNone').textContent=c['미신청'];
-    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미신청 → 신청완료 → 일정확정으로 바꿀 수 있어요.' : '＊이미 '+(c['일정확정']+c['신청완료'])+'명이 트레이닝을 신청했어요!';
+    var c={'진행 중':0,'예정':0,'미정':0}; trainees.forEach(function(m){c[m.train_status||'미정']++;});
+    $('trAll').innerHTML=trainees.length+'<small>명</small>'; $('trProg').textContent=c['진행 중']; $('trPlan').textContent=c['예정']; $('trNone').textContent=c['미정'];
+    var h=$('trHint'); if(h)h.textContent = window.__isAdmin ? '＊상태 버튼을 눌러 미정 → 예정 → 진행 중으로 바꿀 수 있어요.' : '＊이미 '+(c['진행 중']+c['예정'])+'명이 트레이닝을 신청했어요!';
     if(window.__isAdmin){ tb.querySelectorAll('.stb').forEach(function(b){ b.addEventListener('click',function(){ setTrainStatus(b.dataset.kid,b.dataset.st); }); }); }
   }
   function setTrainStatus(kid,st){
@@ -1325,7 +1325,7 @@
     var ts=$('prefTimeStatus'),tt=$('prefTimeTxt');
     if(ts){ if(myPref.pref){ if(tt)tt.textContent="'"+myPref.pref+"' 선호로 등록됨"; ts.style.display=''; } else ts.style.display='none'; }
     var ps=$('prefPlaceStatus'),pt=$('prefPlaceTxt');
-    if(ps){ if(myPref.place){ var pl=myPref.place==='ZOOM'?'비대면 ZOOM':(myPref.place+' 대면'); if(pt)pt.textContent="'"+pl+"'으로 등록됨"; ps.style.display=''; } else ps.style.display='none'; }
+    if(ps){ if(myPref.place){ var pl=myPref.place==='ZOOM'?'금융쌤 조율':(myPref.place+' 대면'); if(pt)pt.textContent="'"+pl+"'으로 등록됨"; ps.style.display=''; } else ps.style.display='none'; }
   }
   document.querySelectorAll('#prefTime button').forEach(function(b){b.addEventListener('click',function(){savePref('train_pref',b.dataset.pref);});});
   document.querySelectorAll('#prefPlace button').forEach(function(b){b.addEventListener('click',function(){savePref('train_place',b.dataset.place);});});
