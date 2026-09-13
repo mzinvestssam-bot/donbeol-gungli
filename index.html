@@ -241,6 +241,20 @@
   .w2num{width:100%;font-family:inherit;font-size:17px;font-weight:800;color:var(--ink);border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--bg);outline:none;-moz-appearance:textfield}
   .w2num:focus{border-color:var(--green)}
   .w2num::-webkit-outer-spin-button,.w2num::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .w3lbl{font-weight:800;font-size:13.5px;color:var(--ink);margin:16px 0 5px}
+  .w3lbl:first-child{margin-top:2px}
+  .w3hint{font-size:11.5px;color:var(--muted);font-weight:600;margin:-2px 0 7px;line-height:1.5}
+  #twForm .w3in{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:var(--bg);outline:none;-moz-appearance:textfield}
+  #twForm .w3in:focus{border-color:var(--green);background:#fff}
+  #twForm .w3in::-webkit-outer-spin-button,#twForm .w3in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  #twForm .w3sel{width:100%;font-family:inherit;font-size:14px;font-weight:700;color:var(--ink);border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:var(--bg);outline:none;cursor:pointer}
+  #twForm .w3sel:focus{border-color:var(--green);background:#fff}
+  .w3grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .w3grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  @media(max-width:520px){.w3grid3{grid-template-columns:1fr}}
+  .w3card2{border:1px solid var(--line2);border-radius:12px;padding:13px 14px;background:var(--bg);margin-top:8px}
+  .w3card2 .cap{font-weight:800;font-size:12.5px;color:var(--green2);margin-bottom:8px}
+  .w3div{height:1px;background:var(--line2);margin:20px 0 4px}
   .calcembed{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
   .calcembed iframe{width:100%;height:1200px;border:0;display:block}
   .twrite:hover{background:var(--green2)}
@@ -948,7 +962,7 @@
     {n:0,label:'OT',title:'오리엔테이션 · 나만의 이유',due:'8/30',asset:false},
     {n:1,label:'WEEK 1',title:'내 자산 그릇 점검하기',due:'9/6',asset:true},
     {n:2,label:'WEEK 2',title:'평생 흔들리지 않는 자산구조',due:'9/13',asset:false,w2:true},
-    {n:3,label:'WEEK 3',title:'내 집 마련 기초',due:'9/20',asset:false},
+    {n:3,label:'WEEK 3',title:'내 집 마련 기초',due:'9/20',asset:false,w3:true},
     {n:4,label:'WEEK 4',title:'나만의 똘똘한 1채 찾기',due:'9/27',asset:false}
   ];
   var mySubs={}, board=$('taskBoard'), curW=0;
@@ -987,6 +1001,77 @@
   var rmPeriods=['지금','1년 후','3년 후','5년 후','10년 후','은퇴'];
   function mrow(k,label){return '<div class="mrow"><span>'+label+'</span><input type="number" data-k="'+k+'" placeholder="0"><em>만원</em></div>';}
   function grp(title,rows){return '<div class="fg"><b class="gh">'+title+'</b>'+rows.map(function(r){return mrow(r[0],r[1]);}).join('');}
+  function w3sel(k,opts){ return '<select class="w3sel" data-rm="'+k+'"><option value="">선택하세요</option>'+opts.map(function(o){return '<option value="'+o+'">'+o+'</option>';}).join('')+'</select>'; }
+  function w3in(k,ph,num){ return '<input class="w3in" data-rm="'+k+'"'+(num?' type="number" inputmode="numeric"':'')+' placeholder="'+(ph||'')+'">'; }
+  function w3ta(k,ph){ return '<textarea data-rm="'+k+'" style="min-height:64px" placeholder="'+(ph||'')+'"></textarea>'; }
+  function w3html(){
+    var h='';
+    /* ── WS01 동네 분석 ── */
+    h+='<div class="fcard"><h3>📍 워크시트 01 · 내가 지내는 동네 분석</h3><p class="fsub2">지금 사는 동네를 강의에서 배운 세 가지 — 일자리·교통·학군으로 뜯어봐요.</p>';
+    h+='<div class="w3lbl">우리 동네 이름 (시/구/동)</div>'+w3in('w3-town','예) 성남시 분당구 서현동');
+    h+='<div class="w3grid2" style="margin-top:8px"><div><div class="w3lbl">사는 형태</div>'+w3sel('w3-live-type',['자가','전세','월세','부모님 집'])+'</div><div><div class="w3lbl">여기 산 지</div>'+w3in('w3-live-years','예) 3년')+'</div></div>';
+    h+='<div class="w3div"></div><div class="w3lbl">출근 시간 — 일자리까지 몇 분?</div><div class="w3hint">카카오맵 길찾기 → 평일 오전 7:30 출발 기준 대중교통 시간</div>';
+    h+='<div class="w3grid3"><div>'+w3in('w3-t-gangnam','강남역 (분)',1)+'</div><div>'+w3in('w3-t-yeouido','여의도역 (분)',1)+'</div><div>'+w3in('w3-t-cityhall','시청·광화문 (분)',1)+'</div></div>';
+    h+='<div class="w3lbl">내 직장까지 (역 이름 · 약 몇 분)</div>'+w3in('w3-t-work','예) 판교역 · 약 15분');
+    h+='<div class="w3div"></div><div class="w3lbl">직접 걸어서 확인하기</div><div class="w3hint">"장 본 거 들고 매일 이 길을 올라갈 수 있을까?"가 기준이에요.</div>';
+    h+='<div class="w3grid2"><div>'+w3in('w3-station','가장 가까운 지하철역')+'</div><div>'+w3in('w3-station-min','걸어서 몇 분',1)+'</div></div>';
+    h+='<div class="w3grid2" style="margin-top:8px"><div><div class="w3lbl" style="margin-top:8px">가는 길</div>'+w3sel('w3-road',['평지','언덕'])+'</div><div><div class="w3lbl" style="margin-top:8px">가장 가까운 초등학교</div>'+w3in('w3-school','')+'</div></div>';
+    h+='<div class="w3lbl">학원이 많이 모인 곳 (없으면 "없음")</div>'+w3in('w3-academy','');
+    h+='<div class="w3lbl">자주 가는 마트·병원·공원</div>'+w3in('w3-life','');
+    h+='<div class="w3lbl">동네 분위기 한 줄</div>'+w3in('w3-mood','예) 아이들이 많고 조용하고 깔끔하다');
+    h+='<div class="w3div"></div><div class="w3lbl">옆 동네와 비교하기</div><div class="w3hint">호갱노노 앱에서 우리 동네와 옆 동네 두 곳의 가격(색)을 비교해보세요.</div>';
+    h+='<div class="w3card2"><div class="cap">옆 동네 ①</div>'+w3in('w3-near1-name','옆 동네 이름')+'<div style="margin-top:8px">'+w3sel('w3-near1-cmp',['우리보다 더 비싸다','비슷','우리보다 더 싸다'])+'</div><div style="margin-top:8px">'+w3in('w3-near1-why','왜 그럴까? (아는 만큼 한 줄)')+'</div></div>';
+    h+='<div class="w3card2"><div class="cap">옆 동네 ②</div>'+w3in('w3-near2-name','옆 동네 이름')+'<div style="margin-top:8px">'+w3sel('w3-near2-cmp',['우리보다 더 비싸다','비슷','우리보다 더 싸다'])+'</div><div style="margin-top:8px">'+w3in('w3-near2-why','왜 그럴까? (아는 만큼 한 줄)')+'</div></div>';
+    h+='<div class="w3lbl">한 줄 결론 — 우리 동네는 ___ 때문에 이 가격이다</div>'+w3in('w3-ws1-concl','예) 역이 가깝고 초등학교가 단지 안에 있어서');
+    h+='</div>';
+    /* ── WS02 우리 집 분석 ── */
+    h+='<div class="fcard"><h3>🏠 워크시트 02 · 내가 사는 곳 분석</h3><p class="fsub2">지금 사는 집을 "하나의 상품"으로 봐요. 내 집 가격을 설명할 수 있으면 남의 집도 보여요.</p>';
+    h+='<div class="w3lbl">우리 집 (네이버부동산에서 확인)</div>';
+    h+='<div class="w3grid2"><div>'+w3in('w3-home-name','단지·건물 이름')+'</div><div>'+w3in('w3-home-year','지은 해(준공)',1)+'</div></div>';
+    h+='<div class="w3grid2" style="margin-top:8px"><div>'+w3in('w3-home-py','평수',1)+'</div><div>'+w3in('w3-home-floor','층')+'</div></div>';
+    h+='<div class="w3div"></div><div class="w3lbl">시세 세 가지</div><div class="w3hint">① 지금 나온 매물 중 가장 낮은 값(호가) ② 최근 실제 거래된 값(실거래) ③ 전세가</div>';
+    h+=w3in('w3-price-listing','① 지금 나온 매물 가격 (가장 낮은 것)')+'<div style="margin-top:8px">'+w3in('w3-price-real','② 최근 실제 거래된 가격 · 언제')+'</div><div style="margin-top:8px">'+w3in('w3-price-jeonse','③ 전세 가격')+'</div>';
+    h+='<div class="w3lbl">1평 가격 = 실거래가 ÷ 평수 (강의의 "땅의 가치")</div>'+w3in('w3-py-price','예) 59,000만 ÷ 24평 = 약 2,458만원');
+    h+='<div class="w3div"></div><div class="w3lbl">우리 집의 좋은 점·아쉬운 점 (상/중/하)</div>';
+    h+='<div class="w3grid2"><div><div class="w3hint">일자리 (출근 편한가)</div>'+w3sel('w3-f-job',['상','중','하'])+'</div><div><div class="w3hint">교통 (역이 가까운가)</div>'+w3sel('w3-f-transit',['상','중','하'])+'</div></div>';
+    h+='<div class="w3grid2" style="margin-top:8px"><div><div class="w3hint">학군 (학교·학원가)</div>'+w3sel('w3-f-school',['상','중','하'])+'</div><div><div class="w3hint">생활 (마트·공원·평지)</div>'+w3sel('w3-f-life',['상','중','하'])+'</div></div>';
+    h+='<div class="w3lbl">우리 집에서 절대 못 버리는 것 딱 하나</div>'+w3in('w3-home-keep','예) 강남 30분 출근');
+    h+='<div class="w3div"></div><div class="w3grid2"><div><div class="w3lbl" style="margin-top:2px">집 가격, 납득이 되나요?</div>'+w3sel('w3-ok',['된다','안 된다'])+'</div><div><div class="w3lbl" style="margin-top:2px">이유 한 줄</div>'+w3in('w3-ok-why','비싸/싸 보이는 이유')+'</div></div>';
+    h+='<div class="w3lbl">내가 이 집을 판다면, 사줄 사람은?</div>'+w3in('w3-buyer','예) 강남 출근 신혼부부 / 근처 초등학교 보내려는 가족');
+    h+='</div>';
+    /* ── WS03 대장 3개 시세 ── */
+    h+='<div class="fcard"><h3>👑 워크시트 03 · 동네 대장 3개 시세</h3><p class="fsub2">우리 동네에서 제일 비싼 아파트 세 곳을 찾고 "왜 비쌀까"를 답해봐요. 이게 첫 손품이에요.</p>';
+    [1,2,3].forEach(function(i){
+      h+='<div class="w3card2"><div class="cap">대장 아파트 '+i+'</div>'+w3in('w3-big'+i+'-name','아파트 이름')+
+         '<div class="w3grid3" style="margin-top:8px"><div>'+w3in('w3-big'+i+'-year','지은 해',1)+'</div><div>'+w3in('w3-big'+i+'-py','평수',1)+'</div><div>'+w3in('w3-big'+i+'-ppy','1평 가격',1)+'</div></div>'+
+         '<div style="margin-top:8px">'+w3in('w3-big'+i+'-real','실거래가 (만원)',1)+'</div>'+
+         '<div style="margin-top:8px">'+w3in('w3-big'+i+'-why','왜 비쌀까? (지하철·학교·새 아파트·공원 등)')+'</div></div>';
+    });
+    h+='<div class="w3div"></div><div class="w3lbl">1등은 어디인가</div>';
+    h+='<div class="w3grid2"><div>'+w3in('w3-top-name','1평 가격이 가장 높은 곳')+'</div><div>'+w3in('w3-my-ppy','우리 집 1평 가격',1)+'</div></div>';
+    h+='<div class="w3lbl">1등과의 차이 · 그 차이는 무엇 때문일까</div>'+w3in('w3-top-diff','예) 1평에 500만 차이 · 역세권 + 학원가');
+    h+='<div class="w3div"></div><div class="w3lbl">싸 보이는 곳이 있다면 — "왜 쌀까?"부터</div>';
+    h+='<div class="w3grid2"><div>'+w3in('w3-cheap-name','셋 중 상대적으로 싼 곳')+'</div><div>'+w3in('w3-cheap-why','싼 이유 (언덕·오래됨·역 멀다…)')+'</div></div>';
+    h+='<div class="w3lbl">한 줄 결론 — 우리 동네 1등은 ___, 비싼 이유는 ___</div>';
+    h+='<div class="w3grid2"><div>'+w3in('w3-ws3-top','1등 아파트')+'</div><div>'+w3in('w3-ws3-why','비싼 이유')+'</div></div>';
+    h+='</div>';
+    /* ── WS04 나만의 강남 선언 ── */
+    h+='<div class="fcard"><h3>🚩 워크시트 04 · 나만의 강남 선언</h3><p class="fsub2">지금 내 돈으로 닿을 수 있는 가장 좋은 동네를 정하고, 날짜를 박는 거예요.</p>';
+    h+='<div class="w3lbl">내 돈으로 볼 수 있는 가격</div><div class="w3hint">모은 돈 + 빌릴 수 있을 것 같은 돈 − 여유 비용(세금·복비·수리 1~3천)</div>';
+    h+='<div class="w3grid3"><div>'+w3in('w3-money-saved','모은 돈(만원)',1)+'</div><div>'+w3in('w3-money-borrow','빌릴 돈(만원)',1)+'</div><div>'+w3in('w3-money-buffer','여유 비용(만원)',1)+'</div></div>';
+    h+='<div class="w3grid2" style="margin-top:8px"><div><div class="w3lbl" style="margin-top:2px">= 볼 수 있는 가격대</div>'+w3in('w3-money-range','예) 28,000만원 (2억 8천)',1)+'</div><div><div class="w3lbl" style="margin-top:2px">사고 싶은 이유</div>'+w3sel('w3-money-goal',['내가 살 집','전세 끼고 투자','아직 모름'])+'</div></div>';
+    h+='<div class="w3lbl">나는 지금 어느 계단에 있나요?</div>'+w3sel('w3-stage',['1. 돈 모으는 중','2. 책·강의로 공부 중','3. 동네 시세 보는 중','4. 임장 다니는 중','5. 후보 단지 고르는 중','6. 계약 준비 중','7. 내 집 마련!']);
+    h+='<div class="w3div"></div><div class="w3lbl">가보고 싶은 동네 두 곳</div><div class="w3hint">하나는 지금 가격대에 맞는 곳, 하나는 조금 더 좋은 곳. 이유는 세 가지 중 하나면 충분해요.</div>';
+    h+='<div class="w3card2"><div class="cap">지금 가격에 맞는 곳</div>'+w3in('w3-area1-name','동네 이름')+'<div style="margin-top:8px">'+w3sel('w3-area1-why',['일자리','역세권','학군'])+'</div><div style="margin-top:8px">'+w3in('w3-area1-reason','한 줄 이유')+'</div></div>';
+    h+='<div class="w3card2"><div class="cap">조금 더 좋은 곳</div>'+w3in('w3-area2-name','동네 이름')+'<div style="margin-top:8px">'+w3sel('w3-area2-why',['일자리','역세권','학군'])+'</div><div style="margin-top:8px">'+w3in('w3-area2-reason','한 줄 이유')+'</div></div>';
+    h+='<div class="w3div"></div><div class="w3lbl">이번 달에 할 일 딱 하나</div>';
+    h+='<div class="w3grid2"><div>'+w3sel('w3-todo',['두 동네 시세 앱으로 보기','부동산에 전화 한 통','동네 한 바퀴 걷기'])+'</div><div>'+w3in('w3-todo-date','하는 날짜 (예: 9/25)')+'</div></div>';
+    h+='<div class="w3grid2" style="margin-top:8px"><div><div class="w3lbl" style="margin-top:2px">같이 할 사람 (혼자 가지 마세요)</div>'+w3in('w3-todo-buddy','')+'</div><div><div class="w3lbl" style="margin-top:2px">집 살지 결정할 목표일</div>'+w3in('w3-todo-goaldate','예) 6개월~1년 뒤')+'</div></div>';
+    h+='<div class="w3div"></div><div class="w3lbl">✍ 선언</div><div class="w3hint">나 ___ 은/는 ___ 까지, ___ 에서 나만의 강남을 찾는다.</div>';
+    h+='<div class="w3grid3"><div>'+w3in('w3-decl-name','내 이름')+'</div><div>'+w3in('w3-decl-date','목표일')+'</div><div>'+w3in('w3-decl-area','동네')+'</div></div>';
+    h+='</div>';
+    return h;
+  }
   function openWrite(w){
     curW=w; var meta=wkMeta[w]; var s=mySubs[w]||{};
     var html='<div class="twh"><div class="twlab">'+meta.label+'</div><h2>'+meta.title+'</h2><div class="twdue">⏰ 마감 '+meta.due+'(일) 23:59'+(w===1?' · 미제출 시 강퇴':'')+'</div></div>';
@@ -1016,6 +1101,10 @@
         '<textarea data-rm="w2-industry" placeholder="예) AI 반도체 / 방산 / 2차전지 … 또는 아직 모르겠어요"></textarea></div>';
       html+='<div class="fcard"><h3>④ 내 연금·절세 현황</h3><p class="fsub2">연금저축·IRP 있으신가요? 연말정산 때 토해내나요, 환급받나요? 절세 트레이닝 때 참고해요.</p>'+
         '<textarea data-rm="w2-pension" placeholder="예) 연금저축 있음, 작년 연말정산 20만원 토해냄 / 또는 아직 없음"></textarea></div>';
+    }
+    else if(meta.w3){
+      html+='<a class="calchint" href="https://eok-calculator.vercel.app" target="_blank" rel="noopener">🏠 손품 팁 — 네이버부동산·호갱노노·카카오맵을 켜두고 채우면 훨씬 빨라요<span>1억 계산기 열기 →</span></a>';
+      html+=w3html();
     }
     html+='<div class="fcard"><h3>💬 인증 글 + 캡처</h3><p class="fsub2">이번 주 배운 점·느낀 점·고민을 자유롭게 적어주세요. 캡처·사진 첨부도 돼요.</p><textarea id="twNote" placeholder="예) 처음 자산을 정리해보니 생각보다 부채가 많아서 놀랐어요..."></textarea><label class="fileadd">📎 이미지 첨부 <span>(최대 5장)</span><input type="file" id="twFiles" accept="image/*" multiple hidden></label><div id="twPreview" class="fpreview"></div></div>';
     $('twForm').innerHTML=html;
