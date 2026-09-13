@@ -330,15 +330,32 @@
   .mdfiles{display:flex;flex-wrap:wrap;gap:10px}
   .mdfiles img{width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
   /* 트레이닝 선호 (수강생) */
-  .tpcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh)}
-  .tpq{font-size:14px;font-weight:800;margin-bottom:9px}
-  .tpopts{display:flex;gap:10px;flex-wrap:wrap}
-  .tpopts button{flex:1;min-width:110px;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px;text-align:center;color:var(--ink2)}
-  .tpopts button b{display:block;font-size:14px;font-weight:800;color:var(--ink)} .tpopts button small{font-size:11.5px;color:var(--muted);font-weight:600}
-  .tpopts button:hover{border-color:#C9D2DC}
-  .tpopts button.on{border-color:var(--green);background:var(--green-s);box-shadow:0 0 0 2px rgba(22,163,74,.12)}
-  .tpopts button.on b{color:var(--green2)}
-  .tpdone{font-size:13px;font-weight:800;color:var(--green);margin-top:14px;min-height:18px}
+  .tpcard{background:linear-gradient(135deg,#F0FAF3 0%,#FBFEEF 100%);border:1.5px solid rgba(22,163,74,.26);border-radius:18px;padding:22px clamp(18px,3vw,26px);box-shadow:0 8px 24px rgba(15,23,42,.06)}
+  .tphead{text-align:center;margin-bottom:16px}
+  .tpbadge{display:inline-block;background:var(--green-s);color:var(--green2);font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:999px;margin-bottom:8px}
+  .tptitle{font-size:clamp(16px,2.2vw,19px);font-weight:900;color:var(--ink);margin:0 0 4px;letter-spacing:-.01em}
+  .tpsub{font-size:12.5px;color:var(--muted);line-height:1.55;margin:0}
+  .tpopts{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  .tpopts button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 8px;background:#fff;border:1.5px solid rgba(15,23,42,.08);border-radius:14px;cursor:pointer;transition:transform .12s,border-color .15s,background .15s}
+  .tpopts button:hover{transform:translateY(-1px);border-color:rgba(22,163,74,.35)}
+  .tpopts button .ico{font-size:22px}
+  .tpopts button b{font-size:14px;font-weight:800;color:var(--ink)} .tpopts button small{font-size:11px;color:var(--muted);font-weight:600}
+  .tpopts button.on{background:linear-gradient(135deg,#22C55E 0%,#12833C 100%);border-color:var(--green2);box-shadow:0 6px 18px rgba(22,163,74,.32)}
+  .tpopts button.on b,.tpopts button.on small{color:#fff} .tpopts button.on small{opacity:.85}
+  .tpstatus{margin-top:12px;padding:10px 14px;background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.3);border-radius:10px;font-size:12.5px;color:#166534;text-align:center}
+  .tpstatus .chk{display:inline-block;width:18px;height:18px;background:#22c55e;color:#fff;border-radius:50%;line-height:18px;font-size:10px;font-weight:900;margin-right:6px;text-align:center}
+  .tploc{margin-top:18px;padding-top:18px;border-top:1px dashed rgba(15,23,42,.12)}
+  .locopts{display:grid;gap:8px}
+  .locopts button{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:#fff;border:1.5px solid rgba(15,23,42,.08);border-radius:14px;cursor:pointer;text-align:left;transition:transform .12s,border-color .15s,background .15s}
+  .locopts button:hover{transform:translateY(-1px);border-color:rgba(22,163,74,.35)}
+  .locopts button .ico{font-size:20px;flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--green-s);border-radius:10px}
+  .locopts button .body{flex:1;min-width:0}
+  .locopts button .nm{display:block;font-size:14px;font-weight:800;color:var(--ink);margin-bottom:2px}
+  .locopts button .addr{display:block;font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.45;word-break:keep-all}
+  .locopts button .mark{flex-shrink:0;width:20px;height:20px;border:2px solid rgba(15,23,42,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:transparent}
+  .locopts button.on{background:linear-gradient(135deg,#22C55E 0%,#12833C 100%);border-color:var(--green2);box-shadow:0 6px 18px rgba(22,163,74,.32)}
+  .locopts button.on .nm{color:#fff} .locopts button.on .addr{color:rgba(255,255,255,.85)} .locopts button.on .ico{background:rgba(255,255,255,.18)}
+  .locopts button.on .mark{background:#fff;border-color:#fff;color:var(--green2)}
   /* 트레이닝 현황표 */
   .tfbtn{font-size:12.5px;font-weight:700;border-radius:100px;padding:7px 14px;background:var(--bg);border:1px solid var(--line);color:var(--ink2)}
   .tfbtn:hover{border-color:#C9D2DC} .tfbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -676,11 +693,29 @@
     <section id="trainpref">
       <div class="shead"><div><div class="sec-lbl">Training</div><div class="sec-h">트레이닝 선호</div><div class="sec-s">금융쌤과의 트레이닝, 편한 시간·장소를 골라주세요</div></div></div>
       <div class="tpcard">
-        <div class="tpq">🕐 선호 시간</div>
-        <div class="tpopts" id="prefTime"><button data-pref="평일"><b>평일</b><small>월~금</small></button><button data-pref="주말"><b>주말</b><small>토·일</small></button></div>
-        <div class="tpq" style="margin-top:16px">📍 선호 장소</div>
-        <div class="tpopts" id="prefPlace"><button data-place="강남"><b>강남 대면</b></button><button data-place="성남"><b>성남 대면</b></button><button data-place="ZOOM"><b>비대면 ZOOM</b></button></div>
-        <div class="tpdone" id="prefDone"></div>
+        <div class="tphead">
+          <span class="tpbadge">🗓 트레이닝 선호 시간</span>
+          <h3 class="tptitle">평일 / 주말 중 편한 쪽을 골라주세요</h3>
+          <p class="tpsub">금융쌤이 트레이닝 일정 잡을 때 반영해 드려요. 언제든 다시 바꿀 수 있어요.</p>
+        </div>
+        <div class="tpopts" id="prefTime">
+          <button data-pref="평일"><span class="ico">💼</span><b>평일</b><small>월~금</small></button>
+          <button data-pref="주말"><span class="ico">🌞</span><b>주말</b><small>토·일</small></button>
+        </div>
+        <div class="tpstatus" id="prefTimeStatus" style="display:none"><span class="chk">✓</span> <b id="prefTimeTxt"></b> · 일정 잡힐 때 우선 반영</div>
+
+        <div class="tploc">
+          <div class="tphead">
+            <h3 class="tptitle">📍 트레이닝 장소를 선택해주세요</h3>
+            <p class="tpsub">거리가 멀어 대면이 어려우면 마지막 항목을 골라주세요. 나중에 바꿔도 됩니다.</p>
+          </div>
+          <div class="locopts" id="prefPlace">
+            <button data-place="강남"><span class="ico">🏙</span><span class="body"><span class="nm">강남 대면 트레이닝</span><span class="addr">서초대로77길 17 Block77빌딩</span></span><span class="mark">✓</span></button>
+            <button data-place="성남"><span class="ico">🏢</span><span class="body"><span class="nm">성남 대면 트레이닝</span><span class="addr">황새울로214번길 8 MS프라자</span></span><span class="mark">✓</span></button>
+            <button data-place="ZOOM"><span class="ico">🤝</span><span class="body"><span class="nm">저는 너무 멀어요</span><span class="addr">금융쌤이 비대면 ZOOM으로 조율해 드려요</span></span><span class="mark">✓</span></button>
+          </div>
+          <div class="tpstatus" id="prefPlaceStatus" style="display:none"><span class="chk">✓</span> <b id="prefPlaceTxt"></b> · 일정 잡힐 때 우선 반영</div>
+        </div>
       </div>
     </section>
 
@@ -1287,7 +1322,10 @@
   function paintPref(){
     document.querySelectorAll('#prefTime button').forEach(function(b){b.classList.toggle('on',b.dataset.pref===myPref.pref);});
     document.querySelectorAll('#prefPlace button').forEach(function(b){b.classList.toggle('on',b.dataset.place===myPref.place);});
-    var pd=$('prefDone'); if(pd)pd.textContent=(myPref.pref&&myPref.place)?('✓ '+myPref.pref+' · '+myPref.place+'로 신청됐어요'):'';
+    var ts=$('prefTimeStatus'),tt=$('prefTimeTxt');
+    if(ts){ if(myPref.pref){ if(tt)tt.textContent="'"+myPref.pref+"' 선호로 등록됨"; ts.style.display=''; } else ts.style.display='none'; }
+    var ps=$('prefPlaceStatus'),pt=$('prefPlaceTxt');
+    if(ps){ if(myPref.place){ var pl=myPref.place==='ZOOM'?'비대면 ZOOM':(myPref.place+' 대면'); if(pt)pt.textContent="'"+pl+"'으로 등록됨"; ps.style.display=''; } else ps.style.display='none'; }
   }
   document.querySelectorAll('#prefTime button').forEach(function(b){b.addEventListener('click',function(){savePref('train_pref',b.dataset.pref);});});
   document.querySelectorAll('#prefPlace button').forEach(function(b){b.addEventListener('click',function(){savePref('train_place',b.dataset.place);});});
