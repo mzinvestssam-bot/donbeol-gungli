@@ -675,7 +675,7 @@
       <div class="shead"><div><div class="sec-lbl">Training</div><div class="sec-h">트레이닝 선호</div><div class="sec-s">금융쌤과의 트레이닝, 편한 시간·장소를 골라주세요</div></div></div>
       <div class="tpcard">
         <div class="tpq">🕐 선호 시간</div>
-        <div class="tpopts" id="prefTime"><button data-pref="평일 낮"><b>평일 낮</b><small>월~금 낮</small></button><button data-pref="평일 저녁"><b>평일 저녁</b><small>월~금 저녁</small></button><button data-pref="주말"><b>주말</b><small>토·일 낮</small></button></div>
+        <div class="tpopts" id="prefTime"><button data-pref="평일"><b>평일</b><small>월~금</small></button><button data-pref="주말"><b>주말</b><small>토·일</small></button></div>
         <div class="tpq" style="margin-top:16px">📍 선호 장소</div>
         <div class="tpopts" id="prefPlace"><button data-place="강남"><b>강남 대면</b></button><button data-place="성남"><b>성남 대면</b></button><button data-place="ZOOM"><b>비대면 ZOOM</b></button></div>
         <div class="tpdone" id="prefDone"></div>
@@ -1239,7 +1239,7 @@
   var trainees=[], trF='all', trQ='', myPref={};
   var stMap={'일정확정':'ok','신청완료':'late','미신청':'risk'};
   var stIcon={'일정확정':'⭕','신청완료':'🔺','미신청':'❌'};
-  function prefIco(v){ if(!v)return ''; if(v.indexOf('주말')>-1)return '🌞'; if(v.indexOf('저녁')>-1)return '🌙'; return '💼'; }
+  function prefIco(v){ if(!v)return ''; return v.indexOf('주말')>-1?'🌞':'💼'; }
   function placeIco(v){ if(!v)return ''; if(v.indexOf('강남')>-1)return '🏙'; if(v.indexOf('성남')>-1)return '🏢'; return '🤝'; }
   function loadTrain(){
     if(!window.SUPA_URL)return;
