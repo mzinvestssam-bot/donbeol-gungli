@@ -1306,7 +1306,7 @@
     var pct=Math.round(m.w.filter(function(x){return x>0;}).length/5*100);
     $('mdHead').innerHTML='<div class="mdprofile"><div class="mdav">'+esc((nm||'?').charAt(0))+'</div>'+
       '<div class="mdpi"><h2>'+esc(nm)+'</h2><div class="mdmeta">가입 '+esc(m.act||'—')+' · 진도 '+pct+'% · <span class="pill '+m.st+'">'+stLabel[m.st]+'</span></div></div>'+
-      '<button id="mdKick" class="kickbtn">'+(m.removed?'강퇴 취소':'강퇴하기')+'</button></div>';
+      (window.__isCoachOnly?'':'<button id="mdKick" class="kickbtn">'+(m.removed?'강퇴 취소':'강퇴하기')+'</button>')+'</div>';
     $('mdSubs').innerHTML='<div class="fcard"><div class="mdempty">불러오는 중...</div></div>';
     var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY};
     reloadSubs(kid);
@@ -1314,7 +1314,7 @@
       .then(function(r){return r.json();}).then(function(rows){ if(rows&&rows[0])$('mdMemo').value=rows[0].memo||''; }).catch(function(){});
     document.querySelector('nav').classList.remove('hide');
     $('adminView').classList.add('hide'); $('studentView').classList.add('hide'); $('memberDetailView').classList.remove('hide'); window.scrollTo(0,0);
-    $('mdKick').addEventListener('click',function(){ toggleKick(m); });
+    var mk=$('mdKick'); if(mk)mk.addEventListener('click',function(){ toggleKick(m); });
   }
   function reloadSubs(kid){
     var H={apikey:window.SUPA_KEY,Authorization:'Bearer '+window.SUPA_KEY};
@@ -1346,7 +1346,7 @@
           '<div class="mds"><span>부채</span><b>'+d.toLocaleString()+'</b>만원</div>'+
           '<div class="mds net"><span>순자산</span><b>'+(a-d).toLocaleString()+'</b>만원</div></div>';
       }
-      if(s.roadmap&&Object.keys(s.roadmap).length){ body+=renderRoadmap(s.roadmap)+renderW2(s.roadmap); }
+      if(s.roadmap&&Object.keys(s.roadmap).length){ body+=renderRoadmap(s.roadmap)+renderW2(s.roadmap)+renderW3(s.roadmap); }
       if(s.note){ body+='<div class="mdlbl">💬 인증 글</div><div class="mdnote">'+esc(s.note)+'</div>'; }
       if(s.files&&s.files.length){ body+='<div class="mdlbl">📎 첨부 이미지 ('+s.files.length+')</div><div class="mdfiles">'+s.files.map(function(u){return '<a href="'+esc(u)+'" target="_blank"><img src="'+esc(u)+'"></a>';}).join('')+'</div>'; }
       if(!body)body='<div class="mdempty">내용이 비어 있어요</div>';
@@ -1360,6 +1360,21 @@
     if(!rm)return '';
     var map=[['w2-gap','목표금액 · GAP (만원)'],['w2-free','경제적 자유용 트랙'],['w2-seed','시드 증액용 트랙'],['w2-industry','배우고 싶은 산업'],['w2-pension','연금·절세 현황']];
     return map.map(function(m){ return rm[m[0]]?'<div class="mdlbl">'+m[1]+'</div><div class="mdnote">'+esc(rm[m[0]])+'</div>':''; }).join('');
+  }
+  function renderW3(rm){
+    if(!rm)return '';
+    var has=Object.keys(rm).some(function(k){return k.indexOf('w3-')===0;}); if(!has)return '';
+    var groups=[
+      ['📍 워크시트 01 · 동네 분석',[['w3-town','우리 동네'],['w3-live-type','사는 형태'],['w3-live-years','산 지'],['w3-t-gangnam','강남역(분)'],['w3-t-yeouido','여의도역(분)'],['w3-t-cityhall','시청·광화문(분)'],['w3-t-work','직장까지'],['w3-station','가까운 역'],['w3-station-min','역까지 도보(분)'],['w3-road','가는 길'],['w3-school','가까운 초등'],['w3-academy','학원가'],['w3-life','마트·병원·공원'],['w3-mood','동네 분위기'],['w3-near1-name','옆동네①'],['w3-near1-cmp','옆동네① 비교'],['w3-near1-why','옆동네① 이유'],['w3-near2-name','옆동네②'],['w3-near2-cmp','옆동네② 비교'],['w3-near2-why','옆동네② 이유'],['w3-ws1-concl','한 줄 결론']]],
+      ['🏠 워크시트 02 · 우리 집 분석',[['w3-home-name','단지·건물'],['w3-home-year','준공'],['w3-home-py','평수'],['w3-home-floor','층'],['w3-price-listing','매물가(호가)'],['w3-price-real','실거래가·언제'],['w3-price-jeonse','전세가'],['w3-py-price','1평 가격'],['w3-f-job','일자리'],['w3-f-transit','교통'],['w3-f-school','학군'],['w3-f-life','생활'],['w3-home-keep','절대 못버리는 것'],['w3-ok','가격 납득'],['w3-ok-why','납득 이유'],['w3-buyer','사줄 사람']]],
+      ['👑 워크시트 03 · 대장 3개',[['w3-big1-name','대장①'],['w3-big1-year','대장① 준공'],['w3-big1-py','대장① 평수'],['w3-big1-ppy','대장① 1평가'],['w3-big1-real','대장① 실거래'],['w3-big1-why','대장① 이유'],['w3-big2-name','대장②'],['w3-big2-year','대장② 준공'],['w3-big2-py','대장② 평수'],['w3-big2-ppy','대장② 1평가'],['w3-big2-real','대장② 실거래'],['w3-big2-why','대장② 이유'],['w3-big3-name','대장③'],['w3-big3-year','대장③ 준공'],['w3-big3-py','대장③ 평수'],['w3-big3-ppy','대장③ 1평가'],['w3-big3-real','대장③ 실거래'],['w3-big3-why','대장③ 이유'],['w3-top-name','1등'],['w3-my-ppy','우리집 1평가'],['w3-top-diff','1등과 차이·이유'],['w3-cheap-name','싼 곳'],['w3-cheap-why','싼 이유'],['w3-ws3-top','결론 1등'],['w3-ws3-why','결론 이유']]],
+      ['🚩 워크시트 04 · 나만의 강남',[['w3-money-saved','모은 돈(만)'],['w3-money-borrow','빌릴 돈(만)'],['w3-money-buffer','여유비용(만)'],['w3-money-range','볼 수 있는 가격대'],['w3-money-goal','사고싶은 이유'],['w3-stage','현재 계단'],['w3-area1-name','후보① 동네'],['w3-area1-why','후보① 이유(요소)'],['w3-area1-reason','후보① 한줄'],['w3-area2-name','후보② 동네'],['w3-area2-why','후보② 이유(요소)'],['w3-area2-reason','후보② 한줄'],['w3-todo','이번달 할일'],['w3-todo-date','하는 날짜'],['w3-todo-buddy','같이 할 사람'],['w3-todo-goaldate','결정 목표일'],['w3-decl-name','선언 이름'],['w3-decl-date','선언 목표일'],['w3-decl-area','선언 동네']]]
+    ];
+    return groups.map(function(g){
+      var rows=g[1].filter(function(p){return rm[p[0]]!=null&&String(rm[p[0]]).trim()!=='';})
+        .map(function(p){return '<tr><td class="rp">'+p[1]+'</td><td>'+esc(String(rm[p[0]]))+'</td></tr>';}).join('');
+      return rows?'<div class="mdlbl">'+g[0]+'</div><div class="rmwrap"><table class="rmtbl mdrm"><tbody>'+rows+'</tbody></table></div>':'';
+    }).join('');
   }
   function renderRoadmap(rm){
     var rows=rmPeriods.map(function(p,i){ var a=rm[i+'-a']||'',h=rm[i+'-h']||'',e=rm[i+'-e']||''; if(!a&&!h&&!e)return ''; return '<tr><td class="rp">'+p+'</td><td>'+esc(a)+'</td><td>'+esc(h)+'</td><td>'+esc(e)+'</td></tr>'; }).join('');
