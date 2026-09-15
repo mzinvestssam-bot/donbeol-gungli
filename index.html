@@ -763,8 +763,8 @@
       <div class="sub" id="adSub">티끌모아 잘살궁리 1기 · 실시간 수강생 현황</div>
       <div class="kpis">
         <div class="kpi"><div class="k" id="kpiCountLbl">등록 수강생</div><div class="v" id="kpiCount">0<small>명</small></div><div class="d">로그인 기준</div></div>
-        <div class="kpi"><div class="k">1주차 제출률</div><div class="v">—</div><div class="d" style="color:var(--muted)">8/31 오픈</div></div>
-        <div class="kpi"><div class="k">완주 진행률</div><div class="v">—</div><div class="d" style="color:var(--muted)">4주 과정</div></div>
+        <div class="kpi"><div class="k">1주차 제출률</div><div class="v" id="kpiW1">—</div><div class="d" style="color:var(--muted)">8/31 오픈</div></div>
+        <div class="kpi"><div class="k">완주 진행률</div><div class="v" id="kpiDone">—</div><div class="d" style="color:var(--muted)">4주 과정</div></div>
         <div class="kpi"><div class="k">챌린지 시작</div><div class="v" style="font-size:20px">8/31</div><div class="d">월요일</div></div>
       </div>
     </div>
@@ -1204,11 +1204,26 @@
     list.querySelectorAll('[data-unmake]').forEach(function(b){b.addEventListener('click',function(){ if(confirm('코치를 해제할까요? 담당 수강생은 미배정 상태가 됩니다.'))setCoachRole(b.dataset.unmake,'student'); });});
   }
   function mark(v){return v===2?'<span class="mk y" title="피드백완료" style="color:var(--blue)">✓✓</span>':(v?'<span class="mk y">✓</span>':'<span class="mk n">·</span>');}
-  [{w:'OT'},{w:'1주차'},{w:'2주차'},{w:'3주차'},{w:'4주차'}].forEach(function(r){
-    var d=document.createElement('div');d.className='wrate';
-    d.innerHTML='<div class="l"><span>'+r.w+'</span><b>미오픈</b></div><div class="wbar"><i class="na" style="width:100%"></i></div>';
-    $('wrates').appendChild(d);
-  });
+  function renderWrates(){
+    var wr=$('wrates'); if(!wr)return;
+    var W=(typeof weeks!=='undefined')?weeks:[];
+    var studs=(members||[]).filter(function(m){return m.role!=='coach'&&!m.removed;});
+    var tot=studs.length;
+    var labels=[['OT',0],['1주차',1],['2주차',2],['3주차',3],['4주차',4]];
+    wr.innerHTML=labels.map(function(L){
+      var n=L[1], open=!!(W[n]&&W[n].live);
+      if(!open||!tot) return '<div class="wrate"><div class="l"><span>'+L[0]+'</span><b style="color:var(--muted)">미오픈</b></div><div class="wbar"><i class="na" style="width:100%"></i></div></div>';
+      var sub=studs.filter(function(m){return m.w[n]>0;}).length, pct=Math.round(sub/tot*100);
+      return '<div class="wrate"><div class="l"><span>'+L[0]+'</span><b>'+sub+'/'+tot+'명 · '+pct+'%</b></div><div class="wbar"><i style="width:'+pct+'%"></i></div></div>';
+    }).join('');
+    var k1=$('kpiW1'); if(k1){ if(tot&&W[1]&&W[1].live){ var s1=studs.filter(function(m){return m.w[1]>0;}).length; k1.textContent=Math.round(s1/tot*100)+'%'; } else k1.textContent='—'; }
+    var kd=$('kpiDone'); if(kd){
+      var openW=[1,2,3,4].filter(function(n){return W[n]&&W[n].live;});
+      if(tot&&openW.length){ var acc=0; studs.forEach(function(m){ var done=openW.filter(function(n){return m.w[n]>0;}).length; acc+=done/openW.length; }); kd.textContent=Math.round(acc/tot*100)+'%'; } else kd.textContent='—';
+    }
+  }
+  window.__renderWrates=renderWrates;
+  renderWrates();
   var mBody=$('mBody'),curF='all',curQ='';
   function renderM(){
     var list=members.filter(function(m){
@@ -1242,6 +1257,7 @@
     $('cLate').textContent=sc.filter(function(m){return m.st==='late';}).length;
     $('cRisk').textContent=sc.filter(function(m){return m.st==='risk';}).length;
     var cu=$('cUnassigned'); if(cu)cu.textContent=sc.filter(function(m){return !m.coach&&m.role!=='coach';}).length;
+    if(window.__renderWrates)window.__renderWrates();
     renderM();
   }
   function applyCoachScope(){
