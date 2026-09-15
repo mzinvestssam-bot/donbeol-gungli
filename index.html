@@ -1528,7 +1528,7 @@
         window.__isAdmin=checkAdmin(nick, myId);
         window.__isCoachOnly=!window.__isAdmin && checkCoach(nick, myId);
         window.__isStaff=window.__isAdmin||window.__isCoachOnly;
-        if(window.__isCoachOnly){ myOnly=true; applyCoachScope(); }
+        if(window.__isCoachOnly && window.__applyCoachScope){ window.__applyCoachScope(); }
         if(window.__isStaff){ if(window.__refreshRoster) window.__refreshRoster(); }
         if(window.__loadMy) window.__loadMy();
         if(window.__renderLecs) window.__renderLecs();
